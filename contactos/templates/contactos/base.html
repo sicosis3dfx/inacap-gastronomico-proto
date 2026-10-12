@@ -66,7 +66,7 @@
     }
 
     /* Barra de Navegación */
-    nav {
+    nav.navbar-main {
       width: 100%;
       background: linear-gradient(135deg, #B8860B 0%, #004080 50%, #006d77 100%);
       backdrop-filter: blur(14px);
@@ -784,52 +784,74 @@
       opacity: 1;
     }
 
-    /* Paginación */
-    .pagination-wrapper {
-      margin-top: 36px;
+    /* Paginación Elegante y Moderna */
+    .pagination-container {
       display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin: 36px 0 20px;
+    }
+
+    .pagination-wrapper {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
+      padding: 10px 22px;
+      background: #ffffff;
+      border: 1.5px solid #b2ebf2;
+      border-radius: 9999px;
+      box-shadow: 0 10px 25px -5px rgba(0, 109, 119, 0.12), 0 4px 10px rgba(0, 0, 0, 0.04);
+      position: static;
     }
 
     .pagination-info {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin: 0 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #003366; /* Azul marino nítido con excelente contraste */
+      background: #e0f7fa; /* Pastilla celeste suave */
+      padding: 7px 18px;
+      border-radius: 9999px;
+      border: 1px solid #80deea;
+      margin: 0 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      letter-spacing: 0.2px;
+    }
+
+    .pagination-info strong {
+      color: #001f3f;
+      font-weight: 800;
     }
 
     .page-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 6px;
       min-width: 38px;
       height: 38px;
-      padding: 0 14px;
-      border-radius: var(--radius-sm);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      font-size: 0.9rem;
-      font-weight: 600;
+      padding: 0 16px;
+      border-radius: 9999px;
+      background: #ffffff;
+      border: 1.5px solid #00B8D4;
+      color: #006d77;
+      font-size: 0.88rem;
+      font-weight: 700;
       text-decoration: none;
       transition: var(--transition);
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 2px 6px rgba(0, 184, 212, 0.12);
     }
 
     .page-btn:hover {
-      border-color: #cbd5e1;
-      background: var(--surface-subtle);
+      border-color: #00828f;
+      background: linear-gradient(135deg, #00B8D4 0%, #00828f 100%);
+      color: #ffffff;
       transform: translateY(-2px);
-    }
-
-    .page-btn.active {
-      background: var(--primary-gradient);
-      color: white;
-      border-color: transparent;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+      box-shadow: 0 6px 16px rgba(0, 184, 212, 0.25);
     }
 
     .page-btn.disabled {
@@ -1142,23 +1164,31 @@
         text-align: center;
       }
 
+      .pagination-container {
+        margin: 24px 0 16px;
+      }
+
       .pagination-wrapper {
-        gap: 6px;
-        margin-top: 24px;
+        border-radius: 16px;
+        padding: 12px 14px;
+        width: 100%;
+        gap: 8px;
       }
 
       .pagination-info {
         width: 100%;
+        justify-content: center;
         text-align: center;
         order: -1;
-        margin: 0 0 8px;
+        margin: 0 0 4px;
       }
 
       .page-btn {
-        padding: 0 10px;
-        font-size: 0.82rem;
+        flex: 1 1 0;
+        padding: 0 8px;
+        font-size: 0.80rem;
         height: 36px;
-        min-width: 36px;
+        border-radius: 10px;
       }
     }
 
@@ -1167,7 +1197,7 @@
 
 <body>
   <!-- Encabezado con Logo y Navegación -->
-  <nav>
+  <nav class="navbar-main">
     <div class="nav-inner">
       <a class="brand" href="{% url 'contacto_list' %}">
         <img class="brand-logo-img" src="{% static 'contactos/img/agenda_logo.png' %}" alt="Agenda Logo" />

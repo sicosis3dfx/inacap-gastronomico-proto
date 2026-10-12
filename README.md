@@ -51,7 +51,7 @@ Este proyecto representa la consolidación y evolución de la **Agenda de Contac
    - Eliminación masiva de contactos seleccionados con confirmación previa y conteo auditado.
 
 4. **Experiencia de Usuario (UX/UI) y Feedback (Indicador 5):**
-   - **Paginación Inteligente:** Listados paginados a 8 contactos por página con navegación fluida y preservación de filtros de búsqueda (`?page=X&q=...`).
+   - **Paginación Inteligente:** Listados paginados a 12 contactos por página con navegación fluida y preservación de filtros de búsqueda (`?page=X&q=...`).
    - **Mensajes Flash:** Notificaciones visuales (`messages.success`, `messages.warning`, `messages.error`) tras cada acción realizada.
 
 5. **Seguridad y Variables de Entorno (Indicador 6):**

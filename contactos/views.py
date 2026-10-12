@@ -19,8 +19,8 @@ def contacto_list(request):
             Q(nombre__icontains=query) | Q(correo__icontains=query)
         )
 
-    # Paginación: 8 contactos por página (conforme a indicadores de evaluación)
-    paginator = Paginator(contactos_qs, 8)
+    # Paginación: 12 contactos por página (conforme a indicadores de evaluación)
+    paginator = Paginator(contactos_qs, 12)
     page_number = request.GET.get('page')
     contactos = paginator.get_page(page_number)
 
