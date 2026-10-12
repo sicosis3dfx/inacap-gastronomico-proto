@@ -30,11 +30,11 @@ https://ti3041-p2-c3-2026p-u1.vercel.app/
 
 ## 📌 1. Explicación de los Resultados Conseguidos (Rúbrica - Indicador 4)
 
-Este proyecto representa la consolidación y evolución de la **Agenda de Contactos Personal**, completando con éxito la transición desde un entorno de desarrollo local con SQLite hacia una **solución productiva completa en la nube (PaaS en Vercel)** respaldada por una base de datos relacional **PostgreSQL gestionada**, arquitectura MTV (Modelo-Template-Vista), interfaz administrativa avanzada con control de acceso basado en roles (RBAC) y sincronización con dispositivos móviles mediante estándares vCard (.vcf).
+Este proyecto representa la consolidación y evolución de la **Agenda de Contactos Personal**, implementando una **solución productiva completa en la nube (PaaS en Vercel)** respaldada por una base de datos relacional en **Supabase (PostgreSQL gestionado, No SQLite)**, arquitectura MTV (Modelo-Template-Vista), interfaz administrativa avanzada con control de acceso basado en roles (RBAC) y sincronización con dispositivos móviles mediante estándares universales vCard (.vcf).
 
 ### 🎯 Resultados Clave Implementados:
-1. **Base de Datos en Producción (PostgreSQL PaaS - Indicador 1):**
-   - Configuración y migración integral del esquema relacional desde SQLite a PostgreSQL.
+1. **Base de Datos en Producción con Supabase (Indicador 1):**
+   - Configuración y migración integral del esquema relacional directamente en **Supabase (PostgreSQL en la nube)**, cumpliendo con el requerimiento estricto de la evaluación (*"Base de datos de producción - No SQLite"*).
    - Ejecución verificada de migraciones (`makemigrations` y `migrate`) para los modelos del sistema, sesiones y control de autenticación.
 
 2. **Personalización y Branding de Django Admin (Indicadores 2 y 10):**
@@ -55,7 +55,7 @@ Este proyecto representa la consolidación y evolución de la **Agenda de Contac
    - **Mensajes Flash:** Notificaciones visuales (`messages.success`, `messages.warning`, `messages.error`) tras cada acción realizada.
 
 5. **Seguridad y Variables de Entorno (Indicador 6):**
-   - Aislamiento completo de credenciales de conexión (`host`, `database`, `user`, `password`, `port`) a través de variables de entorno seguras (`.env` excluido del control de versiones).
+   - Aislamiento completo de credenciales de conexión de Supabase (`host`, `database`, `user`, `password`, `port`) a través de variables de entorno seguras (`.env` excluido del control de versiones).
 
 6. **Despliegue en PaaS con WhiteNoise (Indicadores 7 y 8):**
    - Empaquetado y servido de archivos estáticos optimizado con compresión mediante `whitenoise.middleware.WhiteNoiseMiddleware`.
@@ -73,7 +73,7 @@ Este proyecto representa la consolidación y evolución de la **Agenda de Contac
 | :--- | :--- |
 | **Lenguaje** | Python 3.13 |
 | **Framework Web** | Django 6.1 (Arquitectura MTV) |
-| **Base de Datos** | PostgreSQL (PaaS en la nube) |
+| **Base de Datos** | Supabase (PostgreSQL PaaS en la nube - No SQLite) |
 | **Hosting / PaaS** | Vercel Serverless WSGI |
 | **Servidor de Estáticos** | WhiteNoise 6.9 |
 | **Control de Versiones** | Git + GitHub Desktop |
