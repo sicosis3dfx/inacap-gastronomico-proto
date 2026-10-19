@@ -20,5 +20,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Conectamos las rutas de nuestra app contactos a la raíz del sitio
-    path('', include('contactos.urls'))
+    path('', include('contactos.urls')),
+    path("api-auth/", include("rest_framework.urls")),
 ]
