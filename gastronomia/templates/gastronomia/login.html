@@ -1,0 +1,47 @@
+{% extends 'gastronomia/base.html' %}
+{% load static %}
+
+{% block title %}Inicio de Sesión &bull; Encargados de Local &bull; INACAP Renca{% endblock %}
+
+{% block content %}
+<div style="max-width: 440px; margin: 40px auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 24px; box-shadow: var(--shadow-md);">
+  <div style="text-align: center; margin-bottom: 24px;">
+    <div style="display: inline-block; background: var(--inacap-red); color: white; padding: 12px 18px; border-radius: 14px; font-size: 1.5rem; margin-bottom: 12px;">
+      🔒
+    </div>
+    <h2 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--inacap-navy-dark);">
+      Acceso para Encargados
+    </h2>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+      Inicia sesión para gestionar el stock y catálogo de tu local gastronómico.
+    </p>
+  </div>
+
+  <form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+
+    <div style="margin-bottom: 16px;">
+      <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">
+        Usuario institucional
+      </label>
+      <input type="text" name="username" required autofocus class="form-input-control" placeholder="Ej: operador_casino, encargado_ft1">
+    </div>
+
+    <div style="margin-bottom: 24px;">
+      <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">
+        Contraseña
+      </label>
+      <input type="password" name="password" required class="form-input-control" placeholder="••••••••">
+    </div>
+
+    <button type="submit" class="nav-btn nav-btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem; border-radius: 25px;">
+      Iniciar Sesión
+    </button>
+  </form>
+
+  <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); text-align: center; font-size: 0.8rem; color: var(--text-muted);">
+    Control de acceso restringido bajo estándar OWASP A01 y Ley N° 21.459.
+  </div>
+</div>
+{% endblock %}
+

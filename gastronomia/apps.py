@@ -1,10 +1,10 @@
 from django.apps import AppConfig
 
 
-class ContactosConfig(AppConfig):
+class GastronomiaConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'contactos'
-    verbose_name = 'Agenda de Contactos'
+    name = 'gastronomia'
+    verbose_name = 'Sistema Gastronómico INACAP'
 
     def ready(self):
         # Estandarizamos en español la etiqueta por defecto de los selects en Django

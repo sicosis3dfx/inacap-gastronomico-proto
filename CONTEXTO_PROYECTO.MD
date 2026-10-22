@@ -1,37 +1,125 @@
-# CONTEXTO Y REGLAS DEL PROYECTO: SISTEMA GASTRONÓMICO INACAP RENCA
-**Objetivo para el Agente IA:** Actúa como un Ingeniero de Software Senior experto en Python y Django. Debes construir el prototipo funcional para la Evaluación 3 del "Sistema Centralizado de Publicación y Consulta Gastronómica INACAP Renca", manteniendo la misma arquitectura de despliegue (Vercel + Supabase + WhiteNoise) utilizada previamente por el equipo.
+# DIRECTRICES TÉCNICAS Y CONTEXTO DEL SISTEMA: EVALUACIÓN 3
+**Proyecto:** Sistema Centralizado de Publicación y Consulta Gastronómica — INACAP Sede Renca.  
+**Módulo Django Principal:** `gastronomia`  
+**Rol del Agente IA:** Actúa como Ingeniero de Software Full-Stack Senior en Python/Django. Tu objetivo es transformar la base del repositorio clonado en el prototipo funcional operativo exigido para la Evaluación 3, manteniendo estricta fidelidad con los diagramas UML, requerimientos y matriz de trazabilidad del informe técnico previo. Toda la lógica, vistas, modelos y plantillas deben estructurarse bajo la aplicación `gastronomia`.
 
-## 1. Stack Tecnológico Obligatorio (Presupuesto Cero / Estudiante)
-- **Backend y Frontend:** Python 3.x + Django (Arquitectura MTV con Templates responsivos Mobile-First).
-- **Base de Datos (Cloud/IaaS):** PostgreSQL alojado en **Supabase** (NO usar SQLite en producción). Conexión mediante variables de entorno (`.env`).
-- **Despliegue (PaaS):** Configuración lista para **Vercel** (`vercel.json`, `wsgi.py`) y manejo de archivos estáticos con **WhiteNoise**.
+---
 
-## 2. Modelo de Datos (Estricto según Diagrama de Clases UML del Informe)
-En `models.py` de la app principal (ej. `catalogo` o `locales`), debes implementar exactamente estas entidades:
-1. **`Local`**:
-   - Atributos: `nombre` (CharField), `tipo` (Choices: 'Casino', 'Food Truck'), `activo` (BooleanField, default=True), `operador` (OneToOneField o ForeignKey al modelo `User` de Django para asegurar aislamiento RBAC).
-   - Métodos: `abrir_jornada()`, `cerrar_jornada()`.
-2. **`Producto`**:
-   - Atributos: `local` (ForeignKey a `Local`), `nombre` (CharField), `precio_regular` (PositiveIntegerField), `acepta_junaeb` (BooleanField, default=False), `disponible` (BooleanField, default=True), `categoria` (CharField), `imagen_url` (URLField o ImageField opcional).
-   - Método clave: `cambiar_estado_stock(bool)` para marcar como Agotado.
-3. **`MenuDia` (Herencia de Modelo / Especialización de `Producto`)**:
-   - Hereda de `Producto`.
-   - Atributos adicionales: `plato_entrada` (CharField), `plato_fondo` (CharField), `postre` (CharField), `es_vegano` (BooleanField, default=False).
-   - Método: `get_detalle_completo()`.
-4. **`PromoFlash`**:
-   - Atributos: `local` (ForeignKey a `Local`), `producto` (ForeignKey a `Producto`), `precio_oferta` (PositiveIntegerField), `expira_en` (DateTimeField), `activa` (BooleanField, default=True).
-   - Método o propiedad: `desactivar_oferta()` / validación automática si `timezone.now() > expira_en`.
+## 1. Alcance Funcional y Requerimientos del Sistema
 
-## 3. Funcionalidades Críticas a Implementar (Requerimientos Funcionales)
-- **RF01 (Autenticación y Aislamiento RBAC):** Cada encargado de los 4 locales (Casino Central, Food Truck 1, 2 y 3) inicia sesión y SOLO puede ver y editar los productos de su propio local. Impedir mediante código que un local modifique datos de otro (Cumplimiento Ley 21.459 de delitos informáticos / acceso no autorizado).
-- **RF02 y RF06 (Catálogo Público sin registro):** Vista principal (`index`) pensada para pantallas de celular donde los estudiantes ven los productos agrupados por local sin necesidad de iniciar sesión. Destacar visualmente la opción vegana del Casino.
-- **RF03 (Switch "Agotado" en 1 clic - FUNCIONALIDAD ESTRELLA):** En el panel móvil del encargado, incluir un switch deslizable por cada producto. Al tocarlo, debe enviar una petición (`POST` o `PATCH` vía Fetch/AJAX o formulario rápido) al endpoint para cambiar `disponible=False` en menos de 2 segundos (RNF02) y mostrar el badge rojo "AGOTADO" en el catálogo del estudiante.
-- **RF04 (Filtro JUNAEB):** Un botón o switch en la vista del estudiante (`?junaeb=1`) que filtre instantáneamente solo los productos con `acepta_junaeb=True`.
-- **RF05 (Promociones Flash):** Mostrar en el catálogo las promociones vigentes con un contador regresivo visual en JavaScript hasta `expira_en`.
+El sistema administra la oferta gastronómica de cuatro locales: Casino Central, Food Truck 1, Food Truck 2 y Food Truck 3.
 
-## 4. Reglas de Seguridad OWASP (Obligatorias para la Rúbrica)
-Deja comentarios explícitos en el código (`# SEGURIDAD OWASP: ...`) en las siguientes secciones para exponerlas ante la profesora:
-1. **Prevención de Inyecciones (OWASP A03):** Uso estricto del ORM de Django en consultas y filtros (`?junaeb=1`), más validaciones en formularios (`ModelForm`).
-2. **Control de Acceso Roto (OWASP A01):** Uso de `@login_required` y filtrado estricto `Producto.objects.filter(local__operador=request.user)` antes de cualquier edición o cambio de stock.
-3. **Fallas Criptográficas y Datos Sensibles (OWASP A02):** Uso de variables de entorno (`.env`) para credenciales de Supabase y `SECRET_KEY`, más protección `{% csrf_token %}` en todas las peticiones de modificación.
-4. **Manejo de Errores:** Configuración preparada para no exponer trazas sensibles en producción y uso de `django.contrib.messages` para feedback seguro al usuario. 
+- **RF01 - Autenticación y Perfiles Independientes (RBAC):** Inicio de sesión exclusivo e independiente para cada encargado de local. Un operador autenticado solo puede gestionar su propio catálogo; el sistema debe bloquear cualquier acceso o edición sobre locales ajenos (Aislamiento lógico y cumplimiento Ley N° 21.459).
+- **RF02 - Gestión de Catálogo y Menús:** Publicación de alternativas de almuerzo y líneas de productos. El Casino Central publica 3 alternativas diarias (2 tradicionales y 1 opción vegana destacada). Los Food Trucks administran sus productos por categoría, precio y fotografía.
+- **RF03 - Actualización de Stock (Funcionalidad Crítica Prioritaria):** Control directo mediante switch interactivo en la interfaz móvil del encargado para marcar productos como "Agotado" en 1 clic. La actualización debe persistir en la base de datos Supabase (PostgreSQL) y reflejarse en el catálogo público en menos de 2 segundos (RNF02).
+- **RF04 - Filtrado JUNAEB:** Mecanismo en la vista del estudiante (`?junaeb=1` o filtro en interfaz) que oculta instantáneamente los productos que no acepten pago con tarjeta de beneficio estudiantil.
+- **RF05 - Promociones Flash:** Programación de ofertas con precio rebajado y temporizador regresivo que finaliza y desactiva la oferta automáticamente al expirar el tiempo establecido.
+- **RF06 - Consulta Pública del Catálogo:** Navegación pública, responsiva (Mobile-First) y centralizada para los estudiantes sin requerir registro de cuenta ni inicio de sesión.
+
+---
+
+## 2. Modelo de Dominio (Diagrama de Clases UML del Informe)
+
+En el archivo `gastronomia/models.py`, se deben implementar exactamente las siguientes entidades, respetando atributos, relaciones de herencia y métodos públicos:
+
+### Clase `Local`
+- **Atributos:**
+  - `id_local`: Clave primaria autoincremental.
+  - `nombre`: CharField.
+  - `tipo`: CharField con opciones choices ('Casino', 'Food Truck').
+  - `activo`: BooleanField (default=True).
+  - `operador`: OneToOneField a `auth.User` de Django para aislamiento estricto por usuario.
+- **Métodos:**
+  - `abrir_jornada()`: void (establece `activo=True`).
+  - `cerrar_jornada()`: void (establece `activo=False`).
+
+### Clase `Producto`
+- **Atributos:**
+  - `id_producto`: Clave primaria autoincremental.
+  - `local`: ForeignKey a `Local` (relación "administra", related_name='productos').
+  - `nombre`: CharField.
+  - `precio_regular`: PositiveIntegerField.
+  - `acepta_junaeb`: BooleanField (default=False).
+  - `disponible`: BooleanField (default=True).
+  - `categoria`: CharField opcional.
+  - `imagen_url`: URLField opcional.
+- **Métodos:**
+  - `cambiar_estado_stock(bool)`: void (actualiza el campo `disponible`).
+
+### Clase `MenuDia` (Especialización / Herencia de `Producto`)
+- **Herencia:** Hereda directamente de `Producto`.
+- **Atributos propios:**
+  - `plato_entrada`: CharField.
+  - `plato_fondo`: CharField.
+  - `postre`: CharField.
+  - `es_vegano`: BooleanField (default=False).
+- **Métodos:**
+  - `get_detalle_completo()`: string (retorna cadena formateada con entrada, fondo y postre).
+
+### Clase `PromoFlash`
+- **Atributos:**
+  - `id_promo`: Clave primaria autoincremental.
+  - `local`: ForeignKey a `Local` (relación "genera", related_name='promociones').
+  - `producto`: ForeignKey a `Producto`.
+  - `precio_oferta`: PositiveIntegerField.
+  - `expira_en`: DateTimeField.
+  - `activa`: BooleanField (default=True).
+- **Métodos:**
+  - `desactivar_oferta()`: void (cambia `activa=False`).
+  - Propiedad `esta_vigente`: valida `activa and timezone.now() < self.expira_en`.
+
+---
+
+## 3. Dinámica y Comportamiento del Sistema
+
+### Diagrama de Secuencia (RF03 / HU04 - Actualización de Stock)
+El flujo operativo debe cumplir las siguientes interacciones:
+1. El encargado conmuta el switch de disponibilidad en la interfaz móvil.
+2. La interfaz envía una petición asíncrona (`POST` o `PATCH` vía Fetch a `/api/producto/<id>/stock/`) indicando `disponible=false`.
+3. La API/Vista valida la sesión (`@login_required`), verifica pertenencia del producto al local del usuario y ejecuta el `UPDATE` en Supabase (PostgreSQL).
+4. La base de datos almacena el estado y el backend retorna una respuesta JSON HTTP 200.
+5. El switch en la vista móvil del encargado cambia a inactivo/rojo.
+6. La vista pública de los estudiantes, al consultar el catálogo (`GET /`), renderiza el ítem con el badge distintivo "AGOTADO".
+
+### Diagrama de Estados (Ciclo de Vida del Ítem)
+Los productos deben respetar los siguientes estados y transiciones:
+- `Registrado / Inactivo`: Producto persistido con local cerrado.
+- `Disponible`: Activado tras apertura de jornada.
+- `Agotado`: Al acabarse el stock físico mediante conmutación del switch.
+- `EnPromoFlash`: Estado activo cuando posee una oferta relámpago vigente vinculada.
+- `Descontinuado`: Retirado definitivamente de la carta del local.
+
+---
+
+## 4. Requisitos de Seguridad OWASP y Ley Chilena N° 21.459
+
+Todo el código generado debe documentar explícitamente su cumplimiento normativo mediante comentarios en el código:
+
+1. **A01: Broken Access Control & Ley 21.459 (Acceso Ilícito):**
+   - Vistas operativas protegidas con `@login_required`.
+   - Restricción estricta de consultas a nivel de base de datos: `Producto.objects.filter(local__operador=request.user)`. Ningún usuario puede alterar registros de otro local.
+2. **A03: Injection:**
+   - Consultas y filtros (`?junaeb=1`, `?local=X`) construidos exclusivamente mediante el ORM de Django. Queda prohibido el uso de consultas SQL crudas o concatenadas.
+3. **A02: Cryptographic Failures & Manejo de Secretos:**
+   - Las variables sensibles de conexión a Supabase y la `SECRET_KEY` deben residir en variables de entorno leídas desde `.env`.
+   - Uso obligatorio de la etiqueta `{% csrf_token %}` en formularios y envío de la cabecera `X-CSRFToken` en peticiones Fetch/AJAX.
+
+---
+
+## 5. Hoja de Ruta para la Refactorización en `gastronomia`
+
+1. **Persistencia y Modelos (`gastronomia/models.py` y `gastronomia/admin.py`):**
+   - Implementar las clases `Local`, `Producto`, `MenuDia` y `PromoFlash` con sus métodos.
+   - Configurar `gastronomia/admin.py` registrando todos los modelos. En `ProductoAdmin` y `MenuDiaAdmin`, incluir `disponible` tanto en `list_display` como en `list_editable` para evitar excepciones `admin.E122`.
+   - Personalizar encabezados en Admin:
+     - `admin.site.site_header = "Sistema Gastronómico INACAP Renca"`
+     - `admin.site.site_title = "Portal Gastronómico"`
+2. **Lógica de Control (`gastronomia/views.py`, `gastronomia/urls.py`):**
+   - Retirar los parsers de archivos vCard (`.vcf`) del proyecto anterior.
+   - Implementar:
+     - `catalogo_estudiantes`: Vista pública que lista productos por local con filtro booleano JUNAEB.
+     - `panel_operador`: Vista privada para el encargado donde lista los productos de su local.
+     - `actualizar_stock`: Endpoint rápido para conmutar `disponible` en un clic.
+3. **Capa Visual (`gastronomia/templates/gastronomia/`):**
+   - Reutilizar el sistema de estilos institucionales de INACAP y WhiteNoise.
+   - Diseñar las tarjetas de producto en formato Mobile-First, visualizando precios, badges de JUNAEB, etiqueta de menú vegano y los switches deslizables de disponibilidad.

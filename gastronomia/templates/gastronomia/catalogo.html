@@ -1,0 +1,582 @@
+{% extends 'gastronomia/base.html' %}
+{% load static %}
+
+{% block title %}Catálogo Gastronómico Estudiantil &bull; INACAP Renca{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* HERO HEADER ESTUDIANTIL */
+  .hero-catalog {
+    background: linear-gradient(135deg, var(--inacap-navy-dark) 0%, var(--inacap-navy) 60%, var(--inacap-red-dark) 100%);
+    color: #ffffff;
+    border-radius: var(--radius-lg);
+    padding: 28px 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .hero-title {
+    font-family: var(--font-heading);
+    font-size: 1.85rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    max-width: 650px;
+    margin-bottom: 20px;
+  }
+
+  /* BARRA DE FILTROS RESPONSIVA */
+  .filters-bar {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .filters-group-left {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* BOTÓN INTERACTIVO JUNAEB (RF04) */
+  .btn-junaeb-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    border: 2px solid #2e7d32;
+    cursor: pointer;
+  }
+  .btn-junaeb-toggle.active {
+    background: #2e7d32;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.35);
+  }
+  .btn-junaeb-toggle:not(.active) {
+    background: #ffffff;
+    color: #2e7d32;
+  }
+  .btn-junaeb-toggle:hover {
+    transform: translateY(-1px);
+  }
+
+  /* PESTAÑAS SELECTORAS DE LOCAL */
+  .local-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    max-width: 100%;
+  }
+  .tab-item {
+    white-space: nowrap;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--text-muted);
+    background: var(--surface-subtle);
+    border: 1px solid var(--border);
+    transition: all 0.2s ease;
+  }
+  .tab-item.active, .tab-item:hover {
+    background: var(--inacap-navy);
+    color: #ffffff;
+    border-color: var(--inacap-navy);
+  }
+
+  /* BANNER PROMOS FLASH (RF05) */
+  .flash-deals-section {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    border: 2px dashed #ff9800;
+    border-radius: var(--radius-md);
+    padding: 18px;
+    margin-bottom: 28px;
+  }
+  .flash-deals-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .flash-deals-title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    color: #e65100;
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .flash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .flash-card {
+    background: #ffffff;
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    border: 1px solid #ffcc80;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .flash-price-strike {
+    text-decoration: line-through;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+  .flash-price-promo {
+    color: #d84315;
+    font-weight: 800;
+    font-size: 1.15rem;
+  }
+
+  /* SECCIONES POR LOCAL */
+  .local-section {
+    margin-bottom: 36px;
+  }
+  .local-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 8px;
+  }
+  .local-name-title {
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--inacap-navy-dark);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* GRILLA DE TARJETAS (MOBILE-FIRST) */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+  }
+
+  /* TARJETA DE PRODUCTO */
+  .card-producto {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .card-producto:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* PRODUCTO AGOTADO (RF03 / HU04) */
+  .card-producto.is-agotado {
+    border-color: #ffcdd2;
+    background: #fffafa;
+  }
+  .card-producto.is-agotado .producto-img {
+    filter: grayscale(80%);
+    opacity: 0.7;
+  }
+
+  /* DESTACADO ESPECIAL: MENÚ VEGANO (RF02) */
+  .card-producto.is-vegano {
+    border: 2px solid #2e7d32;
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.15);
+  }
+  .vegano-top-banner {
+    background: #2e7d32;
+    color: #ffffff;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .producto-img-container {
+    height: 160px;
+    background: #e2e8f0;
+    position: relative;
+    overflow: hidden;
+  }
+  .producto-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  }
+
+  .floating-badges {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+  }
+
+  .card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .producto-nombre {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 4px;
+    line-height: 1.25;
+  }
+
+  .producto-categoria {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+
+  /* DETALLE CASINO CENTRAL: ENTRADA / FONDO / POSTRE */
+  .menu-breakdown {
+    background: var(--surface-subtle);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    margin: 10px 0;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-left: 3px solid var(--inacap-navy);
+  }
+  .menu-breakdown.vegano-border {
+    border-left-color: #2e7d32;
+    background: #f1f8e9;
+  }
+  .menu-item-row {
+    display: flex;
+    gap: 6px;
+  }
+  .menu-item-label {
+    font-weight: 700;
+    color: var(--text-muted);
+    min-width: 65px;
+  }
+
+  .card-footer-price {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .precio-tag {
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--inacap-red);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 16px;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--border);
+  }
+
+  @media (max-width: 640px) {
+    .hero-title { font-size: 1.45rem; }
+    .filters-bar { flex-direction: column; align-items: stretch; }
+    .btn-junaeb-toggle { justify-content: center; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <!-- HERO BANNER -->
+  <section class="hero-catalog">
+    <h1 class="hero-title">Oferta Gastronómica Institucional</h1>
+    <p class="hero-subtitle">
+      Consulta en tiempo real la disponibilidad de menús en el Casino Central y la oferta de nuestros tres Food Trucks.
+    </p>
+
+    <!-- Barra de búsqueda rápida integrada en Hero -->
+    <form method="get" action="{% url 'catalogo_publico' %}" style="display: flex; gap: 8px; max-width: 500px;">
+      {% if filtro_junaeb %}<input type="hidden" name="junaeb" value="1">{% endif %}
+      {% if local_seleccionado %}<input type="hidden" name="local" value="{{ local_seleccionado }}">{% endif %}
+      <input type="text" name="q" value="{{ query_busqueda }}" class="form-input-control" placeholder="Buscar por plato, sándwich o bebida..." style="border-radius: 25px; padding-left: 18px;">
+      <button type="submit" class="nav-btn nav-btn-primary" style="border-radius: 25px; padding: 0 20px;">
+        🔍 Buscar
+      </button>
+    </form>
+  </section>
+
+  <!-- PROMOCIONES FLASH ACTIVAS (RF05) -->
+  {% if promos_flash %}
+    <section class="flash-deals-section">
+      <div class="flash-deals-header">
+        <h2 class="flash-deals-title">
+          ⚡ Promociones Flash por Tiempo Limitado
+        </h2>
+        <span class="badge badge-promo">Ofertas del Día</span>
+      </div>
+      <div class="flash-grid">
+        {% for promo in promos_flash %}
+          <div class="flash-card">
+            <div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: #e65100; text-transform: uppercase;">
+                {{ promo.local.nombre }}
+              </div>
+              <strong style="font-size: 0.98rem; display: block;">{{ promo.producto.nombre }}</strong>
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+                ⏱️ Expira: <strong>{{ promo.expira_en|time:"H:i" }} hrs</strong>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="flash-price-strike">${{ promo.producto.precio_regular }}</span>
+              <div class="flash-price-promo">${{ promo.precio_oferta }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  <!-- BARRA DE FILTRADO Y SELECTORES -->
+  <section class="filters-bar">
+    <div class="filters-group-left">
+      <!-- FILTRADO JUNAEB (RF04) -->
+      {% if filtro_junaeb %}
+        <a href="?{% if local_seleccionado %}local={{ local_seleccionado }}&{% endif %}{% if query_busqueda %}q={{ query_busqueda }}{% endif %}" class="btn-junaeb-toggle active" title="Desactivar filtro JUNAEB">
+          <span>💳 Beneficio JUNAEB Activado</span>
+          <span style="font-size: 1.1rem; line-height: 1;">&times;</span>
+        </a>
+      {% else %}
+        <a href="?junaeb=1{% if local_seleccionado %}&local={{ local_seleccionado }}{% endif %}{% if query_busqueda %}&q={{ query_busqueda }}{% endif %}" class="btn-junaeb-toggle" title="Filtrar solo productos que aceptan JUNAEB">
+          <span>💳 Solo Acepta JUNAEB</span>
+        </a>
+      {% endif %}
+
+      {% if query_busqueda %}
+        <span style="font-size: 0.85rem; color: var(--text-muted);">
+          Resultados para: <strong>"{{ query_busqueda }}"</strong>
+          <a href="{% url 'catalogo_publico' %}{% if filtro_junaeb %}?junaeb=1{% endif %}" style="color: var(--inacap-red); text-decoration: none; margin-left: 4px;">[Limpiar]</a>
+        </span>
+      {% endif %}
+    </div>
+
+    <!-- Pestañas de locales -->
+    <div class="local-tabs">
+      <a href="?{% if filtro_junaeb %}junaeb=1&{% endif %}{% if query_busqueda %}q={{ query_busqueda }}{% endif %}" class="tab-item {% if not local_seleccionado %}active{% endif %}">
+        Todos los Locales
+      </a>
+      {% for loc in todos_locales %}
+        <a href="?local={{ loc.id_local }}{% if filtro_junaeb %}&junaeb=1{% endif %}{% if query_busqueda %}&q={{ query_busqueda }}{% endif %}" class="tab-item {% if local_seleccionado == loc.id_local %}active{% endif %}">
+          {% if loc.tipo == 'Casino' %}🍽️{% else %}🚚{% endif %} {{ loc.nombre }}
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- LISTADO DE LOCALES Y SUS CATÁLOGOS -->
+  {% if locales_con_productos %}
+    {% for grupo in locales_con_productos %}
+      <section class="local-section" id="local-{{ grupo.local.id_local }}">
+        <!-- Encabezado de Local -->
+        <div class="local-header">
+          <h2 class="local-name-title">
+            {% if grupo.local.tipo == 'Casino' %}🍽️{% else %}🚚{% endif %}
+            {{ grupo.local.nombre }}
+            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">({{ grupo.local.tipo }})</span>
+          </h2>
+          <div>
+            <span class="badge badge-disponible">🟢 Abierto</span>
+          </div>
+        </div>
+
+        {% if grupo.productos %}
+          <!-- Si es Casino Central, destacamos primero las opciones de Menú Diario (RF02) -->
+          {% if grupo.local.tipo == 'Casino' and grupo.menus_veganos %}
+            <div style="margin-bottom: 20px;">
+              <h3 style="font-size: 1.1rem; color: #2e7d32; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                🌱 Opción Vegana Destacada de Hoy (Casino Central)
+              </h3>
+              <div class="products-grid">
+                {% for item in grupo.menus_veganos %}
+                  <div class="card-producto is-vegano {% if not item.disponible %}is-agotado{% endif %}">
+                    <div class="vegano-top-banner">
+                      <span>🌱 100% Vegano Destacado</span>
+                      <span>Opción Saludable</span>
+                    </div>
+
+                    <div class="producto-img-container">
+                      {% if item.imagen_url %}
+                        <img src="{{ item.imagen_url }}" alt="{{ item.nombre }}" class="producto-img" loading="lazy">
+                      {% else %}
+                        <div class="img-placeholder">🥗</div>
+                      {% endif %}
+
+                      <div class="floating-badges">
+                        {% if not item.disponible %}
+                          <span class="badge badge-agotado">⛔ AGOTADO</span>
+                        {% else %}
+                          <span class="badge badge-disponible">✅ Disponible</span>
+                        {% endif %}
+                        {% if item.acepta_junaeb %}
+                          <span class="badge badge-junaeb">💳 JUNAEB</span>
+                        {% endif %}
+                      </div>
+                    </div>
+
+                    <div class="card-body">
+                      <h4 class="producto-nombre">{{ item.nombre }}</h4>
+                      <span class="producto-categoria">Menú Diario Vegano</span>
+
+                      <!-- Detalle del Menú: Entrada, Fondo, Postre -->
+                      {% if item.menu_info %}
+                        <div class="menu-breakdown vegano-border">
+                          <div class="menu-item-row"><span class="menu-item-label">Entrada:</span> <span>{{ item.menu_info.plato_entrada }}</span></div>
+                          <div class="menu-item-row"><span class="menu-item-label">Fondo:</span> <span>{{ item.menu_info.plato_fondo }}</span></div>
+                          <div class="menu-item-row"><span class="menu-item-label">Postre:</span> <span>{{ item.menu_info.postre }}</span></div>
+                        </div>
+                      {% endif %}
+
+                      <div class="card-footer-price">
+                        <span class="precio-tag">${{ item.precio_regular }}</span>
+                        {% if not item.disponible %}
+                          <strong style="color: var(--status-agotado); font-size: 0.85rem;">Sin Stock</strong>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- Resto de productos o alternativas tradicionales del Casino y Food Trucks -->
+          <div class="products-grid">
+            {% for item in grupo.otros_productos %}
+              <div class="card-producto {% if not item.disponible %}is-agotado{% endif %}">
+                <div class="producto-img-container">
+                  {% if item.imagen_url %}
+                    <img src="{{ item.imagen_url }}" alt="{{ item.nombre }}" class="producto-img" loading="lazy">
+                  {% else %}
+                    <div class="img-placeholder">
+                      {% if item.es_menu_dia %}🍲{% elif 'cafe' in item.nombre|lower or 'café' in item.nombre|lower %}☕{% elif 'bebida' in item.categoria|lower %}🥤{% else %}🥪{% endif %}
+                    </div>
+                  {% endif %}
+
+                  <div class="floating-badges">
+                    <!-- BADGE ROJO AGOTADO (RF03 / HU04) -->
+                    {% if not item.disponible %}
+                      <span class="badge badge-agotado">⛔ AGOTADO</span>
+                    {% else %}
+                      <span class="badge badge-disponible">✅ Disponible</span>
+                    {% endif %}
+                    {% if item.acepta_junaeb %}
+                      <span class="badge badge-junaeb">💳 JUNAEB</span>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <h4 class="producto-nombre">{{ item.nombre }}</h4>
+                  <span class="producto-categoria">
+                    {% if item.es_menu_dia %}Menú Diario Tradicional{% else %}{{ item.categoria|default:"Gastronomía" }}{% endif %}
+                  </span>
+
+                  <!-- Desglose de Menú Tradicional si aplica -->
+                  {% if item.menu_info %}
+                    <div class="menu-breakdown">
+                      <div class="menu-item-row"><span class="menu-item-label">Entrada:</span> <span>{{ item.menu_info.plato_entrada }}</span></div>
+                      <div class="menu-item-row"><span class="menu-item-label">Fondo:</span> <span>{{ item.menu_info.plato_fondo }}</span></div>
+                      <div class="menu-item-row"><span class="menu-item-label">Postre:</span> <span>{{ item.menu_info.postre }}</span></div>
+                    </div>
+                  {% endif %}
+
+                  <div class="card-footer-price">
+                    <span class="precio-tag">${{ item.precio_regular }}</span>
+                    {% if not item.disponible %}
+                      <strong style="color: var(--status-agotado); font-size: 0.85rem;">Agotado</strong>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state">
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+              No hay productos registrados en este local con los filtros actuales.
+            </p>
+          </div>
+        {% endif %}
+      </section>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state">
+      <div style="font-size: 3rem; margin-bottom: 12px;">🍽️</div>
+      <h3 style="font-family: var(--font-heading); margin-bottom: 8px;">No se encontraron productos disponibles</h3>
+      <p style="color: var(--text-muted); max-width: 450px; margin: 0 auto 16px;">
+        {% if filtro_junaeb %}
+          Actualmente no hay productos con pago JUNAEB activo o los locales están cerrados.
+        {% else %}
+          No hay locales con jornada abierta o productos que coincidan con la búsqueda.
+        {% endif %}
+      </p>
+      <a href="{% url 'catalogo_publico' %}" class="nav-btn nav-btn-primary">Ver Catálogo Completo</a>
+    </div>
+  {% endif %}
+{% endblock %}
+

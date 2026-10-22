@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'contactos', # Registramos nuestra app contactos en el proyecto
+    'gastronomia', # Módulo principal del prototipo gastronómico
     "rest_framework",
 ]
 
@@ -149,3 +149,8 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+# Autenticacion Institucional
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'panel_operador'
+LOGOUT_REDIRECT_URL = 'catalogo_publico'

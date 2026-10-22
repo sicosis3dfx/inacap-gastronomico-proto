@@ -14,7 +14,7 @@
 
   <style>
     /* =========================================================
-       SISTEMA DE DISEÑO RESPONSIVO Y SOPORTE REAL MODO OSCURO
+       SISTEMA DE DISEÃ‘O RESPONSIVO Y SOPORTE REAL MODO OSCURO
        ========================================================= */
 
     /* 1. MODO CLARO (Default) */
@@ -85,7 +85,7 @@
       --admin-email-border: rgba(96, 165, 250, 0.3);
     }
 
-    /* Soporte para modo oscuro automático de sistema */
+    /* Soporte para modo oscuro automÃ¡tico de sistema */
     @media (prefers-color-scheme: dark) {
       html:not([data-theme="light"]) {
         --admin-header-bg: linear-gradient(135deg, #0a1118 0%, #111e2e 50%, #132738 100%);
@@ -121,7 +121,7 @@
       }
     }
 
-    /* Tipografía Global */
+    /* TipografÃ­a Global */
     body, input, textarea, select, button {
       font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
     }
@@ -203,7 +203,7 @@
       text-decoration: underline;
     }
 
-    /* Botón refinado para ir a la Agenda Pública */
+    /* BotÃ³n refinado para ir a la Agenda PÃºblica */
     .admin-public-link {
       display: inline-flex !important;
       align-items: center !important;
@@ -226,7 +226,7 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
     }
 
-    /* Botón de Cerrar Sesión */
+    /* BotÃ³n de Cerrar SesiÃ³n */
     #logout-form {
       display: inline !important;
       margin: 0 !important;
@@ -250,7 +250,7 @@
       border-color: #ef4444 !important;
     }
 
-    /* Botón de Alternar Modo Claro / Oscuro Inverso */
+    /* BotÃ³n de Alternar Modo Claro / Oscuro Inverso */
     .theme-switch-btn {
       display: inline-flex !important;
       align-items: center !important;
@@ -276,28 +276,28 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
     }
 
-    /* MODO CLARO: El botón ofrece cambiar a MODO OSCURO con una Luna */
+    /* MODO CLARO: El botÃ³n ofrece cambiar a MODO OSCURO con una Luna */
     html[data-theme="light"] .theme-switch-icon::before {
-      content: "🌙";
+      content: "ðŸŒ™";
       font-size: 0.95rem;
     }
     html[data-theme="light"] .theme-switch-text::before {
       content: "Modo Oscuro";
     }
 
-    /* MODO OSCURO: El botón ofrece cambiar a MODO CLARO con un Sol */
+    /* MODO OSCURO: El botÃ³n ofrece cambiar a MODO CLARO con un Sol */
     html[data-theme="dark"] .theme-switch-icon::before {
-      content: "☀️";
+      content: "â˜€ï¸";
       font-size: 0.95rem;
     }
     html[data-theme="dark"] .theme-switch-text::before {
       content: "Modo Claro";
     }
 
-    /* Soporte cuando aún no hay data-theme explícito */
+    /* Soporte cuando aÃºn no hay data-theme explÃ­cito */
     @media (prefers-color-scheme: dark) {
       html:not([data-theme="light"]):not([data-theme="dark"]) .theme-switch-icon::before {
-        content: "☀️";
+        content: "â˜€ï¸";
         font-size: 0.95rem;
       }
       html:not([data-theme="light"]):not([data-theme="dark"]) .theme-switch-text::before {
@@ -306,7 +306,7 @@
     }
     @media (prefers-color-scheme: light) {
       html:not([data-theme="light"]):not([data-theme="dark"]) .theme-switch-icon::before {
-        content: "🌙";
+        content: "ðŸŒ™";
         font-size: 0.95rem;
       }
       html:not([data-theme="light"]):not([data-theme="dark"]) .theme-switch-text::before {
@@ -332,7 +332,7 @@
       text-decoration: underline;
     }
 
-    /* Tarjetas de Módulos */
+    /* Tarjetas de MÃ³dulos */
     .module {
       background: var(--admin-card-bg) !important;
       border: 1px solid var(--admin-card-border) !important;
@@ -390,7 +390,7 @@
       background: var(--admin-row-hover) !important;
     }
 
-    /* Badges de Contacto (Teléfono y Correo adaptables) */
+    /* Badges de Contacto (TelÃ©fono y Correo adaptables) */
     .badge-telefono {
       display: inline-flex;
       align-items: center;
@@ -482,7 +482,7 @@
       border-color: rgba(148, 163, 184, 0.3) !important;
     }
 
-    /* Botones de acción y formularios */
+    /* Botones de acciÃ³n y formularios */
     .button, input[type=submit], input[type=button], .submit-row input, a.button {
       border-radius: 8px !important;
       font-weight: 600 !important;
@@ -550,7 +550,7 @@
       margin: 0 !important;
     }
 
-    /* Menú desplegable Action: mucho más ancho para leer opciones largas cómodamente */
+    /* MenÃº desplegable Action: mucho mÃ¡s ancho para leer opciones largas cÃ³modamente */
     .actions select {
       min-width: 360px !important;
       max-width: 520px !important;
@@ -572,7 +572,7 @@
       outline: none !important;
     }
 
-    /* Botón "Ir" / "Go" de ejecutar acción */
+    /* BotÃ³n "Ir" / "Go" de ejecutar acciÃ³n */
     .actions .button, .actions button[type="submit"] {
       height: 42px !important;
       padding: 0 24px !important;
@@ -610,7 +610,7 @@
       font-weight: 600 !important;
     }
 
-    /* Barra de Búsqueda (#toolbar) esbelta y compacta */
+    /* Barra de BÃºsqueda (#toolbar) esbelta y compacta */
     #toolbar {
       background: var(--admin-card-bg) !important;
       border: 1px solid var(--admin-table-border) !important;
@@ -640,7 +640,7 @@
       opacity: 0.75 !important;
     }
 
-    /* Caja de texto de búsqueda: ultra esbelta, altura estándar compacta (28px) */
+    /* Caja de texto de bÃºsqueda: ultra esbelta, altura estÃ¡ndar compacta (28px) */
     #toolbar #searchbar,
     #toolbar input[type="text"],
     #changelist-search #searchbar,
@@ -657,7 +657,7 @@
       vertical-align: middle !important;
     }
 
-    /* Botón Buscar: alineado con la misma altura exacta (28px) */
+    /* BotÃ³n Buscar: alineado con la misma altura exacta (28px) */
     #toolbar input[type="submit"],
     #changelist-search input[type="submit"] {
       height: 28px !important;
@@ -683,7 +683,7 @@
       background: var(--admin-btn-primary-hover) !important;
     }
 
-    /* Texto de resultados encontrados: ¡Notable, mucho más grande y legible! */
+    /* Texto de resultados encontrados: Â¡Notable, mucho mÃ¡s grande y legible! */
     #toolbar .small.quiet,
     #changelist-search .small.quiet,
     #changelist-search span.small,
@@ -707,7 +707,7 @@
       text-decoration: underline !important;
     }
 
-    /* Ocultar la ficha técnica criptográfica del hash en la edición de usuario */
+    /* Ocultar la ficha tÃ©cnica criptogrÃ¡fica del hash en la ediciÃ³n de usuario */
     #id_password > p:first-of-type,
     .field-password #id_password p:has(bdi) {
       display: none !important;
@@ -732,8 +732,8 @@
 {% block branding %}
 <div id="site-name">
   <a href="{% url 'admin:index' %}">
-    <img src="{% static 'contactos/img/agenda_logo.png' %}" alt="Logo Agenda" />
-    <h1>{{ site_header|default:'Agenda de Contactos' }}</h1>
+    <span class="brand-badge-inacap" style="background: #d32f2f; color: #fff; padding: 4px 10px; border-radius: 6px; font-weight: 900; font-size: 1.1rem; margin-right: 8px;">INACAP</span>
+    <h1>{{ site_header|default:'Sistema Gastronómico INACAP Renca' }}</h1>
   </a>
 </div>
 {% endblock %}
@@ -741,8 +741,8 @@
 {% block usertools %}
 {% if has_permission %}
 <div id="user-tools">
-  <a href="{% url 'contacto_list' %}" class="admin-public-link" target="_blank" title="Abrir agenda pública en nueva pestaña">
-    🌐 Ver Agenda Pública ↗
+  <a href="{% url 'catalogo_publico' %}" class="admin-public-link" target="_blank" title="Abrir catálogo público en nueva pestaña">
+    🍽️ Ver Catálogo Público ↗
   </a>
 
   <span style="opacity: 0.3; margin: 0 2px;">|</span>
@@ -754,7 +754,7 @@
   <span style="opacity: 0.3; margin: 0 2px;">|</span>
 
   {% if user.has_usable_password %}
-    <a href="{% url 'admin:password_change' %}">Contraseña</a>
+    <a href="{% url 'admin:password_change' %}">ContraseÃ±a</a>
     <span style="opacity: 0.3; margin: 0 2px;">|</span>
   {% endif %}
 
@@ -785,7 +785,7 @@
         btn.addEventListener("click", function (e) {
           e.preventDefault();
           const html = document.documentElement;
-          // Determina si actualmente está oscuro
+          // Determina si actualmente estÃ¡ oscuro
           const isDark =
             html.dataset.theme === "dark" ||
             (!html.dataset.theme && window.matchMedia("(prefers-color-scheme: dark)").matches) ||
@@ -802,15 +802,15 @@ function sanitizeAdminSpanish() {
         document.querySelectorAll('select[name="action"] option').forEach(function (opt) {
           const txt = opt.textContent.trim().toLowerCase();
           if (opt.value === "" && (txt.includes("select an option") || txt.includes("---------"))) {
-            opt.textContent = "- Selecciona una opción -";
+            opt.textContent = "- Selecciona una opciÃ³n -";
           }
         });
 
-        // 2. Etiqueta "Action:" -> "Acción:"
+        // 2. Etiqueta "Action:" -> "AcciÃ³n:"
         document.querySelectorAll('.actions label').forEach(function (lbl) {
           for (let node of lbl.childNodes) {
             if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim().toLowerCase().startsWith("action")) {
-              node.nodeValue = "Acción: ";
+              node.nodeValue = "AcciÃ³n: ";
               break;
             }
           }

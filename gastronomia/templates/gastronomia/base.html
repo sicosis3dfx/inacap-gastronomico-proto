@@ -1,0 +1,386 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+  <meta name="theme-color" content="#b71c1c">
+  <meta name="description" content="Sistema Centralizado de Publicación y Consulta Gastronómica - INACAP Sede Renca">
+  <title>{% block title %}Gastronomía INACAP Renca{% endblock %}</title>
+
+  <!-- Google Fonts: Outfit (Titulares) y Plus Jakarta Sans (Texto) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --inacap-red: #d32f2f;
+      --inacap-red-dark: #b71c1c;
+      --inacap-red-light: #ffebee;
+      --inacap-navy: #004b87;
+      --inacap-navy-dark: #002b49;
+      --inacap-navy-light: #e3f2fd;
+      --accent-green: #2e7d32;
+      --accent-green-light: #e8f5e9;
+      --accent-gold: #f57f17;
+      --accent-gold-light: #fff9c4;
+      --status-agotado: #c62828;
+      --status-agotado-bg: #ffebee;
+      --surface: #ffffff;
+      --surface-subtle: #f8fafc;
+      --bg: #f1f5f9;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 25px -3px rgba(0,0,0,0.1);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* BARRA INSTITUCIONAL SUPERIOR */
+    .header-topbar {
+      background-color: var(--inacap-red-dark);
+      color: #ffffff;
+      font-size: 0.8rem;
+      padding: 4px 16px;
+      text-align: center;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    /* NAVEGACIÓN PRINCIPAL */
+    nav.navbar {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .navbar-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--inacap-navy-dark);
+    }
+
+    .brand-logo-badge {
+      background: linear-gradient(135deg, var(--inacap-red) 0%, var(--inacap-red-dark) 100%);
+      color: #ffffff;
+      font-family: var(--font-heading);
+      font-weight: 900;
+      font-size: 1.1rem;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      letter-spacing: 1px;
+    }
+
+    .brand-text-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--text-main);
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--inacap-red);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .nav-btn-outline {
+      background: transparent;
+      color: var(--inacap-navy);
+      border-color: var(--inacap-navy);
+    }
+    .nav-btn-outline:hover {
+      background: var(--inacap-navy-light);
+    }
+
+    .nav-btn-primary {
+      background: var(--inacap-red);
+      color: #ffffff;
+    }
+    .nav-btn-primary:hover {
+      background: var(--inacap-red-dark);
+    }
+
+    .user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--inacap-navy-light);
+      color: var(--inacap-navy-dark);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    main.main-content {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+
+    /* MENSAJES DJANGO */
+    .alerts-container {
+      margin-bottom: 20px;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .alert-success { background: #e8f5e9; color: #1b5e20; border: 1px solid #c8e6c9; }
+    .alert-error, .alert-danger { background: #ffebee; color: #b71c1c; border: 1px solid #ffcdd2; }
+    .alert-warning { background: #fff8e1; color: #f57f17; border: 1px solid #ffecb3; }
+    .alert-info { background: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb; }
+
+    /* FOOTER */
+    footer.footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 24px 16px;
+      margin-top: auto;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* FORMULARIOS Y CONTROLES GLOBALES */
+    .form-input-control {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      color: var(--text-main);
+      transition: border-color 0.2s;
+    }
+    .form-input-control:focus {
+      outline: none;
+      border-color: var(--inacap-navy);
+      box-shadow: 0 0 0 3px rgba(0, 75, 135, 0.15);
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .badge-junaeb { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+    .badge-vegano { background: #2e7d32; color: #ffffff; }
+    .badge-agotado { background: var(--status-agotado); color: #ffffff; animation: pulse 2s infinite; }
+    .badge-disponible { background: #2e7d32; color: #ffffff; }
+    .badge-promo { background: #e65100; color: #ffffff; }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.85; }
+      100% { opacity: 1; }
+    }
+
+    /* RESPONSIVE MOBILE TWEAKS */
+    @media (max-width: 640px) {
+      .navbar-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .nav-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+      .brand-title {
+        font-size: 1.05rem;
+      }
+    }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Topbar Institucional -->
+  <div class="header-topbar">
+    🏛️ INACAP Sede Renca &bull; Sistema Centralizado de Publicación y Consulta Gastronómica
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="{% url 'catalogo_publico' %}" class="brand-link">
+        <span class="brand-logo-badge">INACAP</span>
+        <div class="brand-text-block">
+          <span class="brand-title">Portal Gastronómico</span>
+          <span class="brand-subtitle">Sede Renca &bull; Evaluación 3</span>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <a href="{% url 'catalogo_publico' %}" class="nav-btn nav-btn-outline">
+          🍽️ Catálogo Estudiantes
+        </a>
+
+        {% if user.is_authenticated %}
+          {% if user.local %}
+            <a href="{% url 'panel_operador' %}" class="nav-btn nav-btn-primary">
+              📱 Panel {{ user.local.nombre }}
+            </a>
+          {% endif %}
+          <span class="user-pill">
+            👤 {{ user.username }}
+          </span>
+          <a href="{% url 'logout' %}" class="nav-btn nav-btn-outline" style="border-color: #cbd5e1; color: #64748b;">
+            Cerrar Sesión
+          </a>
+        {% else %}
+          <a href="{% url 'login' %}" class="nav-btn nav-btn-outline">
+            🔑 Encargados (Login)
+          </a>
+          <a href="{% url 'admin:index' %}" class="nav-btn nav-btn-outline" style="border-color: #cbd5e1; color: #64748b;">
+            ⚙️ Admin
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mensajes de feedback -->
+  {% if messages %}
+    <div class="alerts-container" style="max-width: 1200px; margin: 16px auto 0; padding: 0 16px;">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          <span>{{ message }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Contenido específico -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p><strong>Sistema de Información Gastronómica — INACAP Sede Renca</strong></p>
+      <p>Casino Central &bull; Food Truck 1 &bull; Food Truck 2 &bull; Food Truck 3 &bull; Integración con Tarjeta JUNAEB</p>
+      <p style="font-size: 0.78rem; opacity: 0.8;">Cumplimiento Ley N° 21.459 sobre Delitos Informáticos &bull; Arquitectura Segura OWASP A01 / A02 / A03</p>
+    </div>
+  </footer>
+
+  <!-- Helper para CSRFToken en llamadas Fetch -->
+  <script>
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+  </script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
+

@@ -1,0 +1,569 @@
+{% extends 'gastronomia/base.html' %}
+{% load static %}
+
+{% block title %}Panel de Operador &bull; {{ local.nombre }} &bull; INACAP Renca{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* PANEL OPERATIVO MOBILE-FIRST */
+  .panel-header-card {
+    background: linear-gradient(135deg, var(--inacap-navy-dark) 0%, var(--inacap-navy) 100%);
+    color: #ffffff;
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .panel-top-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .local-badge-pill {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* MÉTRICAS DE JORNADA (CHIPS) */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+  }
+  .metric-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .metric-value {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+  .metric-label {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-top: 4px;
+  }
+
+  /* BARRA DE ACCIÓN: APERTURA / CIERRE DE JORNADA */
+  .shift-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .btn-jornada {
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-weight: 800;
+    font-size: 0.88rem;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+  .btn-abrir {
+    background: #2e7d32;
+    color: #ffffff;
+  }
+  .btn-cerrar {
+    background: #c62828;
+    color: #ffffff;
+  }
+
+  /* SECCIÓN PRINCIPAL: CONTROL DE STOCK (RF03 / HU04) */
+  .stock-section-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--inacap-navy-dark);
+  }
+
+  /* LISTADO DE ITEMS CON SWITCH INTERACTIVO */
+  .stock-item-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s;
+  }
+  .stock-item-row.is-agotado {
+    border-color: #ffcdd2;
+    background: #fffafa;
+  }
+
+  .item-info-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+  .item-title {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+  .item-meta {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .item-action-col {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  /* SWITCH ESTILO iOS INTERACTIVO */
+  .switch-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 58px;
+    height: 32px;
+  }
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: 0.3s;
+    border-radius: 34px;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 24px;
+    width: 24px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  input:checked + .slider {
+    background-color: #2e7d32;
+  }
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+
+  /* TOAST NOTIFICATION */
+  #toast-notification {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    padding: 14px 20px;
+    border-radius: var(--radius-sm);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: translateY(120%);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  #toast-notification.show {
+    transform: translateY(0);
+  }
+  #toast-notification.success { background: #2e7d32; }
+  #toast-notification.error { background: #c62828; }
+
+  /* FORMULARIO ACORDEÓN PARA AGREGAR PRODUCTO */
+  .add-item-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin-top: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .form-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .form-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  @media (max-width: 640px) {
+    .panel-top-row { flex-direction: column; align-items: flex-start; }
+    .stock-item-row { flex-direction: column; align-items: flex-start; }
+    .item-action-col { width: 100%; justify-content: space-between; border-top: 1px dashed var(--border); padding-top: 10px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <!-- HEADER OPERATIVO -->
+  <section class="panel-header-card">
+    <div class="panel-top-row">
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+          <span class="local-badge-pill">{{ local.tipo }}</span>
+          {% if local.activo %}
+            <span class="badge" style="background: #2e7d32; color: #fff;">🟢 Jornada Abierta</span>
+          {% else %}
+            <span class="badge" style="background: #c62828; color: #fff;">🔴 Jornada Cerrada</span>
+          {% endif %}
+        </div>
+        <h1 style="font-family: var(--font-heading); font-size: 1.7rem; font-weight: 800;">
+          {{ local.nombre }}
+        </h1>
+        <p style="font-size: 0.85rem; opacity: 0.85;">
+          Operador asignado: <strong>{{ user.get_full_name|default:user.username }}</strong> &bull; Sede Renca
+        </p>
+      </div>
+
+      <!-- CONTROL DE JORNADA (RF02 / DIAGRAMA DE ESTADOS) -->
+      <form method="post" class="shift-controls">
+        {% csrf_token %}
+        {% if local.activo %}
+          <input type="hidden" name="action" value="cerrar_jornada">
+          <button type="submit" class="btn-jornada btn-cerrar" onclick="return confirm('¿Seguro(a) de suspender la atención y cerrar la jornada del local?');">
+            🔴 Cerrar Jornada
+          </button>
+        {% else %}
+          <input type="hidden" name="action" value="abrir_jornada">
+          <button type="submit" class="btn-jornada btn-abrir">
+            🟢 Abrir Jornada
+          </button>
+        {% endif %}
+      </form>
+    </div>
+
+    <!-- MÉTRICAS EN VIVO -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-value">{{ total_productos }}</div>
+        <div class="metric-label">Total Ítems</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" id="count-disponibles" style="color: #a5d6a7;">{{ disponibles_count }}</div>
+        <div class="metric-label">Disponibles</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" id="count-agotados" style="color: #ef9a9a;">{{ agotados_count }}</div>
+        <div class="metric-label">Agotados</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" style="color: #81d4fa;">{{ junaeb_count }}</div>
+        <div class="metric-label">Acepta JUNAEB</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LISTA DE CONTROL DE STOCK EN 1 CLIC (RF03 / HU04 / RNF02) -->
+  <section>
+    <div class="stock-section-header">
+      <div>
+        <h2 class="section-title">⚡ Control Directo de Stock en 1 Clic</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">
+          Conmuta el interruptor para marcar productos como agotados de forma instantánea (< 2 seg en Supabase).
+        </p>
+      </div>
+      <a href="#form-agregar" class="nav-btn nav-btn-outline" style="border-radius: 20px;">
+        ➕ Agregar Ítem
+      </a>
+    </div>
+
+    {% if productos_data %}
+      {% for item in productos_data %}
+        <div class="stock-item-row {% if not item.producto.disponible %}is-agotado{% endif %}" id="prod-row-{{ item.producto.id_producto }}">
+          <div class="item-info-col">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="item-title">{{ item.producto.nombre }}</span>
+              {% if item.es_menu_dia %}
+                <span class="badge" style="background: var(--inacap-navy); color: #fff;">Menú Casino</span>
+              {% endif %}
+            </div>
+
+            <div class="item-meta">
+              <span>💰 <strong>${{ item.producto.precio_regular }}</strong></span>
+              <span>🏷️ {{ item.producto.categoria|default:"General" }}</span>
+              {% if item.producto.acepta_junaeb %}
+                <span class="badge badge-junaeb">💳 JUNAEB</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- COLUMNA DE ACCIÓN: INTERRUPTOR ASÍNCRONO -->
+          <div class="item-action-col">
+            <span id="badge-stock-{{ item.producto.id_producto }}" class="badge {% if item.producto.disponible %}badge-disponible{% else %}badge-agotado{% endif %}">
+              {% if item.producto.disponible %}✅ DISPONIBLE{% else %}⛔ AGOTADO{% endif %}
+            </span>
+
+            <div class="switch-container">
+              <label class="switch" title="Conmutar stock en 1 clic">
+                <input type="checkbox"
+                       class="stock-toggle-input"
+                       data-id="{{ item.producto.id_producto }}"
+                       data-name="{{ item.producto.nombre }}"
+                       {% if item.producto.disponible %}checked{% endif %}
+                       onchange="conmutarStock(this);">
+                <span class="slider"></span>
+              </label>
+              <span style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">1 Clic</span>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div style="background: var(--surface); border: 1px dashed var(--border); padding: 36px; text-align: center; border-radius: var(--radius-md);">
+        <p style="color: var(--text-muted);">Aún no tienes productos registrados en tu catálogo.</p>
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- FORMULARIO DE REGISTRO RÁPIDO DE PRODUCTO / MENÚ (OWASP A03) -->
+  <section class="add-item-card" id="form-agregar">
+    <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 800; margin-bottom: 14px; color: var(--inacap-navy-dark);">
+      ➕ Publicar Nuevo Ítem en {{ local.nombre }}
+    </h3>
+
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="crear_producto">
+
+      {% if local.tipo == 'Casino' and form_menu %}
+        <div style="margin-bottom: 14px; background: var(--inacap-navy-light); padding: 12px; border-radius: var(--radius-sm);">
+          <label style="font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" name="es_menu_dia" value="1" id="toggle-tipo-form" onchange="toggleFormularioCasino(this.checked);" checked>
+            Formular como Menú del Día Completo (Entrada + Fondo + Postre)
+          </label>
+        </div>
+
+        <div id="contenedor-menu-dia">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">{{ form_menu.nombre.label }}</label>
+              {{ form_menu.nombre }}
+            </div>
+            <div class="form-group">
+              <label class="form-label">{{ form_menu.precio_regular.label }}</label>
+              {{ form_menu.precio_regular }}
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">{{ form_menu.plato_entrada.label }}</label>
+              {{ form_menu.plato_entrada }}
+            </div>
+            <div class="form-group">
+              <label class="form-label">{{ form_menu.plato_fondo.label }}</label>
+              {{ form_menu.plato_fondo }}
+            </div>
+            <div class="form-group">
+              <label class="form-label">{{ form_menu.postre.label }}</label>
+              {{ form_menu.postre }}
+            </div>
+            <div class="form-group">
+              <label class="form-label">{{ form_menu.imagen_url.label }}</label>
+              {{ form_menu.imagen_url }}
+            </div>
+          </div>
+          <div style="display: flex; gap: 24px; margin: 12px 0;">
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.88rem; color: #2e7d32;">
+              {{ form_menu.es_vegano }} 🌱 Opción Vegana Destacada
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.88rem;">
+              {{ form_menu.acepta_junaeb }} 💳 Acepta JUNAEB
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.88rem;">
+              {{ form_menu.disponible }} ✅ En Stock Inmediato
+            </label>
+          </div>
+        </div>
+      {% else %}
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">{{ form_producto.nombre.label }}</label>
+            {{ form_producto.nombre }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{{ form_producto.categoria.label }}</label>
+            {{ form_producto.categoria }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{{ form_producto.precio_regular.label }}</label>
+            {{ form_producto.precio_regular }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{{ form_producto.imagen_url.label }}</label>
+            {{ form_producto.imagen_url }}
+          </div>
+        </div>
+        <div style="display: flex; gap: 24px; margin: 12px 0;">
+          <label style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.88rem;">
+            {{ form_producto.acepta_junaeb }} 💳 Acepta JUNAEB
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.88rem;">
+            {{ form_producto.disponible }} ✅ En Stock Inmediato
+          </label>
+        </div>
+      {% endif %}
+
+      <div style="margin-top: 16px;">
+        <button type="submit" class="nav-btn nav-btn-primary" style="padding: 10px 24px; border-radius: 25px;">
+          💾 Guardar y Publicar en Catálogo
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- TOAST FEEDBACK VISUAL -->
+  <div id="toast-notification"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  /**
+   * Conmuta el stock del producto de forma asíncrona mediante Fetch (RF03 / HU04).
+   * Envía X-CSRFToken y procesa la persistencia en Supabase (PostgreSQL) en < 2 segundos (RNF02).
+   */
+  async function conmutarStock(checkbox) {
+    const prodId = checkbox.dataset.id;
+    const prodName = checkbox.dataset.name;
+    const nuevoEstado = checkbox.checked;
+
+    const row = document.getElementById(`prod-row-${prodId}`);
+    const badge = document.getElementById(`badge-stock-${prodId}`);
+    const countDisp = document.getElementById('count-disponibles');
+    const countAgot = document.getElementById('count-agotados');
+
+    // Deshabilitar temporalmente para evitar peticiones duplicadas
+    checkbox.disabled = true;
+
+    // Actualización de UI Optimista
+    if (nuevoEstado) {
+      row.classList.remove('is-agotado');
+      badge.className = 'badge badge-disponible';
+      badge.textContent = '✅ DISPONIBLE';
+    } else {
+      row.classList.add('is-agotado');
+      badge.className = 'badge badge-agotado';
+      badge.textContent = '⛔ AGOTADO';
+    }
+
+    try {
+      const response = await fetch(`/api/producto/${prodId}/stock/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify({ disponible: nuevoEstado })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Error al persistir el stock en la base de datos.');
+      }
+
+      // Actualizar contadores numéricos
+      let disp = parseInt(countDisp.textContent) || 0;
+      let agot = parseInt(countAgot.textContent) || 0;
+      if (nuevoEstado) {
+        countDisp.textContent = disp + 1;
+        countAgot.textContent = Math.max(0, agot - 1);
+      } else {
+        countDisp.textContent = Math.max(0, disp - 1);
+        countAgot.textContent = agot + 1;
+      }
+
+      mostrarToast(`✔️ Stock actualizado: "${prodName}" ahora está ${nuevoEstado ? 'Disponible' : 'Agotado'}.`, 'success');
+
+    } catch (error) {
+      // Revertir cambio visual en caso de falla de red o autorización (OWASP A01)
+      checkbox.checked = !nuevoEstado;
+      if (!nuevoEstado) {
+        row.classList.remove('is-agotado');
+        badge.className = 'badge badge-disponible';
+        badge.textContent = '✅ DISPONIBLE';
+      } else {
+        row.classList.add('is-agotado');
+        badge.className = 'badge badge-agotado';
+        badge.textContent = '⛔ AGOTADO';
+      }
+      mostrarToast(`❌ Error: ${error.message}`, 'error');
+    } finally {
+      checkbox.disabled = false;
+    }
+  }
+
+  function mostrarToast(mensaje, tipo = 'success') {
+    const toast = document.getElementById('toast-notification');
+    toast.textContent = mensaje;
+    toast.className = `show ${tipo}`;
+    setTimeout(() => {
+      toast.className = '';
+    }, 3200);
+  }
+</script>
+{% endblock %}
+
