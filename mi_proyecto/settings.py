@@ -35,6 +35,8 @@ SECRET_KEY = 'django-insecure-jmw9^b_dy8h-u8c3he$ct1u*if0m@p*ud)&-rb*pbbcl*b2tq=
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'inacap-gastronomico-proto.vercel.app',
+    '.vercel.app',  # Permite cualquier subdominio generado por Vercel para vistas previas
     'ti3041-p2-c3-2026p-u1.vercel.app',
     'localhost',
     '127.0.0.1'
