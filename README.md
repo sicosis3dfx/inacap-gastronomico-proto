@@ -1,5 +1,4 @@
-# ti3041-p2-c3-2026p-u1
-Repositorio de clase a clase Backend INACAP Renca 2026 
+INACAP Renca 2026 
 
 ## Comandos utilizados
 
@@ -14,17 +13,17 @@ python manage.py createsuperuser
 ```
 
 **URL del Despliegue en Producción:**  
-https://ti3041-p2-c3-2026p-u1.vercel.app/
+https://inacap-gastronomico-proto.vercel.app/
 
 ---
 
-# Evaluación Sumativa 2 (ES02) — Programación Backend
+# Evaluación Sumativa 3  — Ingeniería de Software
 
 **Institución:** INACAP — Sede Renca  
-**Asignatura:** Programación Backend (TI3041)  
+**Asignatura:** Ingeniería de Software
 **Caso Seleccionado:** **Caso 3: Agenda de Contactos Personal 2**  
-**Despliegue en Producción:** [https://ti3041-p2-c3-2026p-u1.vercel.app/](https://ti3041-p2-c3-2026p-u1.vercel.app/)  
-**Panel Administrativo:** [https://ti3041-p2-c3-2026p-u1.vercel.app/admin/](https://ti3041-p2-c3-2026p-u1.vercel.app/admin/)  
+**Despliegue en Producción:** [https://inacap-gastronomico-proto.vercel.app/](https://inacap-gastronomico-proto.vercel.app/)  
+**Panel Administrativo:** [https://inacap-gastronomico-proto.vercel.app/admin/](https://inacap-gastronomico-proto.vercel.app/admin/)  
 
 ---
 
