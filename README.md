@@ -92,5 +92,5 @@ python manage.py test contactos
 
 ## 🌐 4. Enlaces de Acceso
 
-* **Aplicación Web:** [https://ti3041-p2-c3-2026p-u1.vercel.app/](https://ti3041-p2-c3-2026p-u1.vercel.app/)
-* **Panel de Administración:** [https://ti3041-p2-c3-2026p-u1.vercel.app/admin/](https://ti3041-p2-c3-2026p-u1.vercel.app/admin/)
+* **Aplicación Web:** [https://inacap-gastronomico-proto.vercel.app/](https://inacap-gastronomico-proto.vercel.app/)
+* **Panel de Administración:** [hhttps://inacap-gastronomico-proto.vercel.app/admin/](https://inacap-gastronomico-proto.vercel.app/admin/)
