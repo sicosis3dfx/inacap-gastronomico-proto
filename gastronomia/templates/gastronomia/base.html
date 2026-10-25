@@ -99,15 +99,18 @@
       color: var(--inacap-navy-dark);
     }
 
-    .brand-logo-badge {
-      background: linear-gradient(135deg, var(--inacap-red) 0%, var(--inacap-red-dark) 100%);
-      color: #ffffff;
-      font-family: var(--font-heading);
-      font-weight: 900;
-      font-size: 1.1rem;
-      padding: 6px 12px;
+    .brand-logo-img {
+      height: 42px;
+      width: auto;
       border-radius: var(--radius-sm);
-      letter-spacing: 1px;
+      display: block;
+      object-fit: contain;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      transition: transform 0.2s ease;
+    }
+
+    .brand-logo-img:hover {
+      transform: scale(1.03);
     }
 
     .brand-text-block {
@@ -300,7 +303,7 @@
   <nav class="navbar">
     <div class="navbar-container">
       <a href="{% url 'catalogo_publico' %}" class="brand-link">
-        <span class="brand-logo-badge">INACAP</span>
+        <img src="{% static 'gastronomia/inacap_logo.png' %}" alt="Logo Oficial INACAP" class="brand-logo-img">
         <div class="brand-text-block">
           <span class="brand-title">Portal Gastronómico</span>
           <span class="brand-subtitle">Sede Renca &bull; Evaluación 3</span>

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-  {% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:'Agenda Contactos Admin' }}
+  {% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:'Portal Gastronómico' }}
 {% endblock %}
 
 {% block extrahead %}
@@ -14,7 +14,7 @@
 
   <style>
     /* =========================================================
-       SISTEMA DE DISEÃ‘O RESPONSIVO Y SOPORTE REAL MODO OSCURO
+       SISTEMA DE DISEÑO RESPONSIVO Y SOPORTE REAL MODO OSCURO
        ========================================================= */
 
     /* 1. MODO CLARO (Default) */
@@ -276,42 +276,14 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
     }
 
-    /* MODO CLARO: El botÃ³n ofrece cambiar a MODO OSCURO con una Luna */
-    html[data-theme="light"] .theme-switch-icon::before {
-      content: "ðŸŒ™";
-      font-size: 0.95rem;
+    /* Estilos para icono y texto del botón de modo */
+    .theme-switch-icon {
+      font-size: 1rem !important;
+      line-height: 1 !important;
+      display: inline-block !important;
     }
-    html[data-theme="light"] .theme-switch-text::before {
-      content: "Modo Oscuro";
-    }
-
-    /* MODO OSCURO: El botÃ³n ofrece cambiar a MODO CLARO con un Sol */
-    html[data-theme="dark"] .theme-switch-icon::before {
-      content: "â˜€ï¸";
-      font-size: 0.95rem;
-    }
-    html[data-theme="dark"] .theme-switch-text::before {
-      content: "Modo Claro";
-    }
-
-    /* Soporte cuando aÃºn no hay data-theme explÃ­cito */
-    @media (prefers-color-scheme: dark) {
-      html:not([data-theme="light"]):not([data-theme="dark"]) .theme-switch-icon::before {
-        content: "â˜€ï¸";
-        font-size: 0.95rem;
-      }
-      html:not([data-theme="light"]):not([data-theme="dark"]) .theme-switch-text::before {
-        content: "Modo Claro";
-      }
-    }
-    @media (prefers-color-scheme: light) {
-      html:not([data-theme="light"]):not([data-theme="dark"]) .theme-switch-icon::before {
-        content: "ðŸŒ™";
-        font-size: 0.95rem;
-      }
-      html:not([data-theme="light"]):not([data-theme="dark"]) .theme-switch-text::before {
-        content: "Modo Oscuro";
-      }
+    .theme-switch-text {
+      display: inline-block !important;
     }
 
     /* Breadcrumbs */
@@ -732,7 +704,7 @@
 {% block branding %}
 <div id="site-name">
   <a href="{% url 'admin:index' %}">
-    <span class="brand-badge-inacap" style="background: #d32f2f; color: #fff; padding: 4px 10px; border-radius: 6px; font-weight: 900; font-size: 1.1rem; margin-right: 8px;">INACAP</span>
+    <img src="{% static 'gastronomia/inacap_logo.png' %}" alt="Logo Oficial INACAP" style="height: 38px; width: auto; border-radius: 6px; vertical-align: middle; margin-right: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.25);" />
     <h1>{{ site_header|default:'Sistema Gastronómico INACAP Renca' }}</h1>
   </a>
 </div>
@@ -754,7 +726,7 @@
   <span style="opacity: 0.3; margin: 0 2px;">|</span>
 
   {% if user.has_usable_password %}
-    <a href="{% url 'admin:password_change' %}">ContraseÃ±a</a>
+    <a href="{% url 'admin:password_change' %}">Contraseña</a>
     <span style="opacity: 0.3; margin: 0 2px;">|</span>
   {% endif %}
 
@@ -764,8 +736,8 @@
   </form>
 
   <button id="custom-theme-btn" type="button" class="theme-switch-btn" title="Alternar modo claro / oscuro">
-    <span class="theme-switch-icon"></span>
-    <span class="theme-switch-text"></span>
+    <span id="custom-theme-icon" class="theme-switch-icon">🌙</span>
+    <span id="custom-theme-text" class="theme-switch-text">Modo Oscuro</span>
   </button>
 </div>
 {% endif %}
@@ -778,45 +750,58 @@
   {{ block.super }}
   <script>
     (function () {
+      function getPreferredTheme() {
+        const stored = localStorage.getItem("theme");
+        if (stored === "dark" || stored === "light") return stored;
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+
+      function applyTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+        localStorage.setItem("theme", theme);
+        const icon = document.getElementById("custom-theme-icon");
+        const text = document.getElementById("custom-theme-text");
+        if (theme === "dark") {
+          if (icon) icon.textContent = "☀️";
+          if (text) text.textContent = "Modo Claro";
+        } else {
+          if (icon) icon.textContent = "🌙";
+          if (text) text.textContent = "Modo Oscuro";
+        }
+      }
+
       function initCustomThemeToggle() {
         const btn = document.getElementById("custom-theme-btn");
         if (!btn) return;
 
+        // Sincronizar estado inicial al cargar la página
+        applyTheme(getPreferredTheme());
+
         btn.addEventListener("click", function (e) {
           e.preventDefault();
-          const html = document.documentElement;
-          // Determina si actualmente estÃ¡ oscuro
-          const isDark =
-            html.dataset.theme === "dark" ||
-            (!html.dataset.theme && window.matchMedia("(prefers-color-scheme: dark)").matches) ||
-            (html.dataset.theme === "auto" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-          const newTheme = isDark ? "light" : "dark";
-          html.dataset.theme = newTheme;
-          localStorage.setItem("theme", newTheme);
+          const currentTheme = document.documentElement.dataset.theme || getPreferredTheme();
+          const nextTheme = currentTheme === "dark" ? "light" : "dark";
+          applyTheme(nextTheme);
         });
       }
 
-function sanitizeAdminSpanish() {
-        // 1. Selector de acciones por defecto ("- Select an option -", "---------")
+      function sanitizeAdminSpanish() {
         document.querySelectorAll('select[name="action"] option').forEach(function (opt) {
           const txt = opt.textContent.trim().toLowerCase();
           if (opt.value === "" && (txt.includes("select an option") || txt.includes("---------"))) {
-            opt.textContent = "- Selecciona una opciÃ³n -";
+            opt.textContent = "- Selecciona una opción -";
           }
         });
 
-        // 2. Etiqueta "Action:" -> "AcciÃ³n:"
         document.querySelectorAll('.actions label').forEach(function (lbl) {
           for (let node of lbl.childNodes) {
             if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim().toLowerCase().startsWith("action")) {
-              node.nodeValue = "AcciÃ³n: ";
+              node.nodeValue = "Acción: ";
               break;
             }
           }
         });
 
-        // 3. Botones "Go" -> "Ejecutar"
         document.querySelectorAll('.actions button[type="submit"], .actions input[type="submit"]').forEach(function (btn) {
           if (btn.textContent && btn.textContent.trim().toLowerCase() === "go") {
             btn.textContent = "Ejecutar";
