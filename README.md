@@ -1,32 +1,35 @@
-INACAP Renca 2026 
-
-## Comandos utilizados
-
-```bash
-python -m venv .venv
-pip install -r requirements.txt
-pip install django
-python manage.py makemigrations
-python manage.py migrate
-python manage.py runserver
-python manage.py createsuperuser
-```
-
-**URL del Despliegue en Producción:**  
-https://inacap-gastronomico-proto.vercel.app/
-
----
-
 # Evaluación Sumativa 3 — Ingeniería de Software
 
-**Institución:** INACAP — Sede Renca  
+**Institución:** INACAP — Sede Renca 2026  
 **Asignatura:** Ingeniería de Software  
+**Docente:** Oscarina Sanabria  
+**Integrantes:** Yoshua Castillo · Martín Tapia · Vicente Sagredo · Angelo Zamora  
 **Proyecto:** Sistema Centralizado de Publicación y Consulta Gastronómica INACAP Renca  
 **Repositorio GitHub:** [https://github.com/sicosis3dfx/inacap-gastronomico-proto/](https://github.com/sicosis3dfx/inacap-gastronomico-proto/)  
 **Despliegue en Producción:** [https://inacap-gastronomico-proto.vercel.app/](https://inacap-gastronomico-proto.vercel.app/)  
-**Panel Administrativo:** [https://inacap-gastronomico-proto.vercel.app/admin/](https://inacap-gastronomico-proto.vercel.app/admin/)
+**Panel Administrativo:** [https://inacap-gastronomico-proto.vercel.app/admin/](https://inacap-gastronomico-proto.vercel.app/admin/)  
 
 ---
+
+## 💻 Instalación y Despliegue Local
+
+```bash
+# Creación y activación del entorno virtual
+python -m venv .venv
+# En Windows: .venv\Scripts\activate
+# En Linux/macOS: source .venv/bin/activate
+
+# Instalación de dependencias
+pip install -r requirements.txt
+
+# Aplicación de migraciones a la base de datos
+python manage.py makemigrations
+python manage.py migrate
+
+# Creación de superusuario y arranque del servidor local
+python manage.py createsuperuser
+python manage.py runserver
+```
 
 ## 📌 1. Explicación de los Resultados Conseguidos (Rúbrica - Indicadores 3.1.1, 3.1.2 y 3.1.3)
 
