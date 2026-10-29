@@ -17,13 +17,14 @@ https://inacap-gastronomico-proto.vercel.app/
 
 ---
 
-# Evaluación Sumativa 3  — Ingeniería de Software
+# Evaluación Sumativa 3 — Ingeniería de Software
 
 **Institución:** INACAP — Sede Renca  
-**Asignatura:** Ingeniería de Software
-**Caso Seleccionado:** **Caso 3: Agenda de Contactos Personal 2**  
+**Asignatura:** Ingeniería de Software  
+**Proyecto:** Sistema Centralizado de Publicación y Consulta Gastronómica INACAP Renca  
+**Repositorio GitHub:** [https://github.com/sicosis3dfx/inacap-gastronomico-proto/](https://github.com/sicosis3dfx/inacap-gastronomico-proto/)  
 **Despliegue en Producción:** [https://inacap-gastronomico-proto.vercel.app/](https://inacap-gastronomico-proto.vercel.app/)  
-**Panel Administrativo:** [https://inacap-gastronomico-proto.vercel.app/admin/](https://inacap-gastronomico-proto.vercel.app/admin/)  
+**Panel Administrativo:** [https://inacap-gastronomico-proto.vercel.app/admin/](https://inacap-gastronomico-proto.vercel.app/admin/)
 
 ---
 
