@@ -22,7 +22,10 @@ urlpatterns = [
     # 3. Endpoint asíncrono de conmutación de stock en 1 clic (RF03 / HU04)
     path('api/producto/<int:pk>/stock/', views.actualizar_stock, name='actualizar_stock'),
 
-    # 4. Flujo de autenticación institucional
+    # 4. Endpoint asíncrono de gestión de promociones flash (RF05)
+    path('api/producto/<int:pk>/promo-flash/', views.gestionar_promo_flash, name='gestionar_promo_flash'),
+
+    # 5. Flujo de autenticación institucional
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
 ]

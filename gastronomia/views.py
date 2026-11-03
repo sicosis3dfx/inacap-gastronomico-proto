@@ -24,6 +24,7 @@ JUSTIFICACIÓN DE SEGURIDAD Y CUMPLIMIENTO NORMATIVO:
 """
 
 import json
+from datetime import timedelta
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -348,3 +349,121 @@ def logout_view(request):
     logout(request)
     messages.info(request, 'Has cerrado sesión correctamente.')
     return redirect('catalogo_publico')
+
+
+# ==============================================================================
+# 5. GESTIÓN ASÍNCRONA DE PROMO FLASH POR OPERADOR (RF05)
+# ==============================================================================
+@login_required
+@require_http_methods(['POST'])
+def gestionar_promo_flash(request, pk):
+    """
+    Endpoint JSON asíncrono para que el encargado active, modifique o desactive
+    promociones flash directamente desde su panel operativo (RF05).
+    Permite editar el precio regular y definir el precio de oferta con duración programada.
+
+    Validaciones estrictas de seguridad (OWASP A01 / Ley N° 21.459):
+      1. Usuario autenticado con sesión activa.
+      2. Pertenencia estricta del producto al local operado por el usuario.
+      3. Verificación de token CSRF (X-CSRFToken).
+    """
+    producto = get_object_or_404(Producto, pk=pk)
+
+    # Validación de autorización horizontal (OWASP A01 / Ley N° 21.459)
+    if not hasattr(request.user, 'local') or producto.local.operador != request.user:
+        return JsonResponse({
+            'success': False,
+            'error': (
+                'Acceso denegado: Intento no autorizado de configurar promoción sobre un producto ajeno. '
+                'Operación bloqueada según Art. 2 de la Ley N° 21.459 (OWASP A01).'
+            )
+        }, status=403)
+
+    # Parseo de datos (JSON o Form POST)
+    payload = {}
+    if request.content_type == 'application/json' and request.body:
+        try:
+            payload = json.loads(request.body.decode('utf-8'))
+        except (json.JSONDecodeError, ValueError):
+            payload = {}
+    else:
+        payload = request.POST
+
+    action = payload.get('action', 'activar')
+
+    # Opción de actualizar el precio regular del producto si se indica
+    precio_regular_input = payload.get('precio_regular')
+    if precio_regular_input:
+        try:
+            pr_val = int(precio_regular_input)
+            if pr_val > 0:
+                producto.precio_regular = pr_val
+                producto.save(update_fields=['precio_regular'])
+        except (ValueError, TypeError):
+            pass
+
+    # Caso Desactivar
+    if action == 'desactivar':
+        promos_activas = PromoFlash.objects.filter(producto=producto, activa=True)
+        for promo in promos_activas:
+            promo.desactivar_oferta()
+
+        return JsonResponse({
+            'success': True,
+            'activa': False,
+            'id_producto': producto.id_producto,
+            'precio_regular': producto.precio_regular,
+            'mensaje': f'Promoción flash desactivada para "{producto.nombre}".'
+        }, status=200)
+
+    # Caso Activar / Actualizar Promo Flash
+    try:
+        precio_oferta = int(payload.get('precio_oferta', 0))
+    except (ValueError, TypeError):
+        return JsonResponse({
+            'success': False,
+            'error': 'El precio de oferta debe ser un valor numérico entero válido.'
+        }, status=400)
+
+    if precio_oferta <= 0:
+        return JsonResponse({
+            'success': False,
+            'error': 'El precio de oferta debe ser mayor a $0.'
+        }, status=400)
+
+    try:
+        duracion_minutos = int(payload.get('duracion_minutos', 60))
+    except (ValueError, TypeError):
+        duracion_minutos = 60
+
+    if duracion_minutos <= 0:
+        duracion_minutos = 60
+
+    expira_en = timezone.now() + timedelta(minutes=duracion_minutos)
+
+    # Desactivamos promociones anteriores activas de este producto
+    PromoFlash.objects.filter(producto=producto, activa=True).update(activa=False)
+
+    # Creamos la nueva promoción flash
+    nueva_promo = PromoFlash.objects.create(
+        local=producto.local,
+        producto=producto,
+        precio_oferta=precio_oferta,
+        expira_en=expira_en,
+        activa=True
+    )
+
+    expira_local = timezone.localtime(nueva_promo.expira_en)
+    hora_str = expira_local.strftime('%H:%M')
+
+    return JsonResponse({
+        'success': True,
+        'activa': True,
+        'id_producto': producto.id_producto,
+        'id_promo': nueva_promo.id_promo,
+        'precio_oferta': nueva_promo.precio_oferta,
+        'precio_regular': producto.precio_regular,
+        'expira_hora': hora_str,
+        'duracion_minutos': duracion_minutos,
+        'mensaje': f'¡Promo Flash activada! "{producto.nombre}" en oferta a ${nueva_promo.precio_oferta:,} hasta las {hora_str} hrs.'
+    }, status=200)

@@ -250,6 +250,152 @@
     color: var(--text-main);
   }
 
+  /* BOTÓN Y BANDEJA PROMO FLASH (RF05) */
+  .btn-promo-toggle {
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid #ff9800;
+    background: #fff8e1;
+    color: #e65100;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .btn-promo-toggle:hover {
+    background: #ffe0b2;
+    transform: translateY(-1px);
+  }
+  .btn-promo-toggle.active {
+    background: linear-gradient(135deg, #e65100, #ff6d00);
+    color: #ffffff;
+    border-color: #ff9100;
+    box-shadow: 0 2px 8px rgba(230, 81, 0, 0.35);
+  }
+
+  .promo-config-tray {
+    background: #fffbf0;
+    border: 1.5px dashed #ff9800;
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-top: 12px;
+    width: 100%;
+    animation: fadeInTray 0.25s ease;
+  }
+  @keyframes fadeInTray {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .promo-tray-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .btn-close-tray {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 6px;
+  }
+  .promo-status-banner {
+    background: #fff3e0;
+    border-left: 4px solid #ff6d00;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    color: #b73e00;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .promo-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    align-items: flex-end;
+  }
+  .promo-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .promo-field-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-main);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .promo-field-input {
+    padding: 8px 12px;
+    font-size: 0.88rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: #ffffff;
+    font-family: inherit;
+    color: var(--text-main);
+    width: 100%;
+  }
+  .promo-field-input:focus {
+    outline: none;
+    border-color: #ff9800;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.2);
+  }
+  .promo-oferta-highlight {
+    font-weight: 800;
+    color: #d84315;
+    border-color: #ffb74d;
+  }
+  .promo-tray-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn-activar-promo {
+    background: linear-gradient(135deg, #e65100, #ff6d00);
+    color: #ffffff;
+    border: none;
+    padding: 9px 15px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .btn-activar-promo:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(230, 81, 0, 0.35);
+  }
+  .btn-desactivar-promo {
+    background: #ffffff;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+    padding: 9px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .btn-desactivar-promo:hover {
+    background: #ffebee;
+  }
+
   @media (max-width: 640px) {
     .panel-top-row { flex-direction: column; align-items: flex-start; }
     .stock-item-row { flex-direction: column; align-items: flex-start; }
@@ -314,12 +460,10 @@
         <div class="metric-value" style="color: #81d4fa;">{{ junaeb_count }}</div>
         <div class="metric-label">Acepta JUNAEB</div>
       </div>
-      {% if promos_flash_count %}
-        <div class="metric-card" style="border-color: rgba(255, 152, 0, 0.4); background: rgba(255, 152, 0, 0.15);">
-          <div class="metric-value" style="color: #ffb74d;">{{ promos_flash_count }}</div>
-          <div class="metric-label">⚡ Promos Flash</div>
-        </div>
-      {% endif %}
+      <div class="metric-card" style="border-color: rgba(255, 152, 0, 0.4); background: rgba(255, 152, 0, 0.15);">
+        <div class="metric-value" id="count-promos-flash" style="color: #ffb74d;">{{ promos_flash_count|default:0 }}</div>
+        <div class="metric-label">⚡ Promos Flash</div>
+      </div>
     </div>
   </section>
 
@@ -339,22 +483,23 @@
 
     {% if productos_data %}
       {% for item in productos_data %}
-        <div class="stock-item-row {% if not item.producto.disponible %}is-agotado{% endif %}" id="prod-row-{{ item.producto.id_producto }}">
+        <div class="stock-item-row {% if not item.producto.disponible %}is-agotado{% endif %}" id="prod-row-{{ item.producto.id_producto }}" style="flex-wrap: wrap;">
           <div class="item-info-col">
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
               <span class="item-title">{{ item.producto.nombre }}</span>
-              {% if item.promo_flash %}
-                <span class="badge badge-flash" title="Expira a las {{ item.promo_flash.expira_en|time:'H:i' }} hrs">
-                  ⚡ PROMO FLASH (${{ item.promo_flash.precio_oferta }})
-                </span>
-              {% endif %}
+              <span id="badge-flash-{{ item.producto.id_producto }}"
+                    class="badge badge-flash"
+                    style="{% if not item.promo_flash %}display: none;{% endif %}"
+                    title="Expira a las {{ item.promo_flash.expira_en|time:'H:i' }} hrs">
+                ⚡ PROMO FLASH (<span id="badge-flash-price-{{ item.producto.id_producto }}">${{ item.promo_flash.precio_oferta }}</span>)
+              </span>
               {% if item.es_menu_dia %}
                 <span class="badge" style="background: var(--inacap-navy); color: #fff;">Menú Casino</span>
               {% endif %}
             </div>
 
             <div class="item-meta">
-              <span>💰 <strong>${{ item.producto.precio_regular }}</strong></span>
+              <span>💰 Precio Normal: <strong id="price-regular-display-{{ item.producto.id_producto }}">${{ item.producto.precio_regular }}</strong></span>
               <span>🏷️ {{ item.producto.categoria|default:"General" }}</span>
               {% if item.producto.acepta_junaeb %}
                 <span class="badge badge-junaeb">💳 JUNAEB</span>
@@ -362,8 +507,17 @@
             </div>
           </div>
 
-          <!-- COLUMNA DE ACCIÓN: INTERRUPTOR ASÍNCRONO -->
+          <!-- COLUMNA DE ACCIÓN: INTERRUPTOR ASÍNCRONO + BOTÓN PROMO FLASH -->
           <div class="item-action-col">
+            <!-- Botón para desplegar configuración de Promo Flash -->
+            <button type="button"
+                    class="btn-promo-toggle {% if item.promo_flash %}active{% endif %}"
+                    id="btn-promo-toggle-{{ item.producto.id_producto }}"
+                    onclick="togglePromoTray({{ item.producto.id_producto }});"
+                    title="Configurar precio y duración de Promoción Flash">
+              ⚡ {% if item.promo_flash %}Promo Activa{% else %}Configurar Promo{% endif %}
+            </button>
+
             <span id="badge-stock-{{ item.producto.id_producto }}" class="badge {% if item.producto.disponible %}badge-disponible{% else %}badge-agotado{% endif %}">
               {% if item.producto.disponible %}✅ DISPONIBLE{% else %}⛔ AGOTADO{% endif %}
             </span>
@@ -378,7 +532,75 @@
                        onchange="conmutarStock(this);">
                 <span class="slider"></span>
               </label>
-              <span style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">1 Clic</span>
+              <span style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">Stock</span>
+            </div>
+          </div>
+
+          <!-- BANDEJA DESPLEGABLE DE CONFIGURACIÓN PROMO FLASH (RF05) -->
+          <div class="promo-config-tray" id="promo-tray-{{ item.producto.id_producto }}" style="display: none;">
+            <div class="promo-tray-header">
+              <span style="font-weight: 800; font-size: 0.88rem; color: #e65100; display: flex; align-items: center; gap: 6px;">
+                ⚡ Gestión de Promoción Flash &bull; {{ item.producto.nombre }}
+              </span>
+              <button type="button" class="btn-close-tray" onclick="togglePromoTray({{ item.producto.id_producto }});" title="Cerrar">&times;</button>
+            </div>
+
+            <div class="promo-status-banner" id="promo-status-{{ item.producto.id_producto }}" style="{% if not item.promo_flash %}display: none;{% endif %}">
+              <div>🔥 <strong>¡Promoción Flash Actualmente Vigente!</strong></div>
+              <div style="font-size: 0.8rem; margin-top: 2px;">
+                Precio rebajado: <strong id="status-oferta-{{ item.producto.id_producto }}">${{ item.promo_flash.precio_oferta }}</strong> &bull; Expira a las: <strong id="status-expira-{{ item.producto.id_producto }}">{{ item.promo_flash.expira_en|time:'H:i' }} hrs</strong>
+              </div>
+            </div>
+
+            <div class="promo-form-grid">
+              <div class="promo-field-group">
+                <label class="promo-field-label">Precio Regular ($):</label>
+                <input type="number"
+                       id="input-regular-{{ item.producto.id_producto }}"
+                       class="promo-field-input"
+                       value="{{ item.producto.precio_regular }}"
+                       min="100"
+                       step="100"
+                       placeholder="Precio normal">
+              </div>
+
+              <div class="promo-field-group">
+                <label class="promo-field-label">Precio Oferta Flash ($):</label>
+                <input type="number"
+                       id="input-oferta-{{ item.producto.id_producto }}"
+                       class="promo-field-input promo-oferta-highlight"
+                       placeholder="Ej: {% if item.promo_flash %}{{ item.promo_flash.precio_oferta }}{% else %}2990{% endif %}"
+                       value="{% if item.promo_flash %}{{ item.promo_flash.precio_oferta }}{% endif %}"
+                       min="100"
+                       step="100">
+              </div>
+
+              <div class="promo-field-group">
+                <label class="promo-field-label">Duración de la Oferta:</label>
+                <select id="select-duracion-{{ item.producto.id_producto }}" class="promo-field-input">
+                  <option value="30">⏱️ 30 Minutos</option>
+                  <option value="60" selected>⏱️ 1 Hora (60 min)</option>
+                  <option value="120">⏱️ 2 Horas</option>
+                  <option value="180">⏱️ 3 Horas (Turno peak)</option>
+                  <option value="360">⏱️ 6 Horas (Todo el día)</option>
+                </select>
+              </div>
+
+              <div class="promo-tray-actions">
+                <button type="button"
+                        class="btn-activar-promo"
+                        onclick="guardarPromoFlash({{ item.producto.id_producto }}, 'activar');">
+                  🚀 Guardar y Activar Promo
+                </button>
+
+                <button type="button"
+                        id="btn-desactivar-promo-{{ item.producto.id_producto }}"
+                        class="btn-desactivar-promo"
+                        style="{% if not item.promo_flash %}display: none;{% endif %}"
+                        onclick="guardarPromoFlash({{ item.producto.id_producto }}, 'desactivar');">
+                  ⛔ Desactivar Promo
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -564,6 +786,123 @@
       mostrarToast(`❌ Error: ${error.message}`, 'error');
     } finally {
       checkbox.disabled = false;
+    }
+  }
+
+  /**
+   * Abre o cierra la bandeja de configuración de Promo Flash para un producto.
+   */
+  function togglePromoTray(prodId) {
+    const tray = document.getElementById(`promo-tray-${prodId}`);
+    if (!tray) return;
+    if (tray.style.display === 'none' || tray.style.display === '') {
+      tray.style.display = 'block';
+    } else {
+      tray.style.display = 'none';
+    }
+  }
+
+  /**
+   * Envía la configuración de Promo Flash (precio regular, precio oferta, duración)
+   * o la desactiva asíncronamente mediante Fetch (RF05).
+   */
+  async function guardarPromoFlash(prodId, action = 'activar') {
+    const inputRegular = document.getElementById(`input-regular-${prodId}`);
+    const inputOferta = document.getElementById(`input-oferta-${prodId}`);
+    const selectDuracion = document.getElementById(`select-duracion-${prodId}`);
+
+    const badgeFlash = document.getElementById(`badge-flash-${prodId}`);
+    const badgeFlashPrice = document.getElementById(`badge-flash-price-${prodId}`);
+    const btnToggle = document.getElementById(`btn-promo-toggle-${prodId}`);
+    const statusBanner = document.getElementById(`promo-status-${prodId}`);
+    const statusOferta = document.getElementById(`status-oferta-${prodId}`);
+    const statusExpira = document.getElementById(`status-expira-${prodId}`);
+    const btnDesactivar = document.getElementById(`btn-desactivar-promo-${prodId}`);
+    const priceDisplay = document.getElementById(`price-regular-display-${prodId}`);
+    const chipCount = document.getElementById('count-promos-flash');
+
+    const payload = {
+      action: action,
+      precio_regular: inputRegular ? parseInt(inputRegular.value) || 0 : 0
+    };
+
+    if (action === 'activar') {
+      const oferta = parseInt(inputOferta.value) || 0;
+      if (oferta <= 0) {
+        mostrarToast('⚠️ Debes ingresar un precio de oferta válido mayor a $0.', 'error');
+        if (inputOferta) inputOferta.focus();
+        return;
+      }
+      payload.precio_oferta = oferta;
+      payload.duracion_minutos = parseInt(selectDuracion.value) || 60;
+    }
+
+    try {
+      const response = await fetch(`/api/producto/${prodId}/promo-flash/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Error al procesar la promoción flash.');
+      }
+
+      if (data.activa) {
+        // Estado Activado
+        if (badgeFlash) badgeFlash.style.display = 'inline-flex';
+        if (badgeFlashPrice) badgeFlashPrice.textContent = `$${data.precio_oferta}`;
+        if (badgeFlash) badgeFlash.title = `Expira a las ${data.expira_hora} hrs`;
+        if (btnToggle) {
+          btnToggle.classList.add('active');
+          btnToggle.innerHTML = '⚡ Promo Activa';
+        }
+        if (statusBanner) {
+          statusBanner.style.display = 'flex';
+          if (statusOferta) statusOferta.textContent = `$${data.precio_oferta}`;
+          if (statusExpira) statusExpira.textContent = `${data.expira_hora} hrs`;
+        }
+        if (btnDesactivar) {
+          btnDesactivar.style.display = 'inline-flex';
+        }
+        if (priceDisplay && data.precio_regular) {
+          priceDisplay.textContent = `$${data.precio_regular}`;
+        }
+        if (chipCount) {
+          let c = parseInt(chipCount.textContent) || 0;
+          chipCount.textContent = c + 1;
+        }
+        mostrarToast(`✔️ ${data.mensaje}`, 'success');
+      } else {
+        // Estado Desactivado
+        if (badgeFlash) badgeFlash.style.display = 'none';
+        if (btnToggle) {
+          btnToggle.classList.remove('active');
+          btnToggle.innerHTML = '⚡ Configurar Promo';
+        }
+        if (statusBanner) {
+          statusBanner.style.display = 'none';
+        }
+        if (btnDesactivar) {
+          btnDesactivar.style.display = 'none';
+        }
+        if (inputOferta) {
+          inputOferta.value = '';
+        }
+        if (chipCount) {
+          let c = parseInt(chipCount.textContent) || 0;
+          chipCount.textContent = Math.max(0, c - 1);
+        }
+        mostrarToast(`ℹ️ ${data.mensaje}`, 'success');
+      }
+
+    } catch (err) {
+      mostrarToast(`❌ Error: ${err.message}`, 'error');
     }
   }
 
