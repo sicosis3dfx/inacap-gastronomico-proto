@@ -314,6 +314,12 @@
         <div class="metric-value" style="color: #81d4fa;">{{ junaeb_count }}</div>
         <div class="metric-label">Acepta JUNAEB</div>
       </div>
+      {% if promos_flash_count %}
+        <div class="metric-card" style="border-color: rgba(255, 152, 0, 0.4); background: rgba(255, 152, 0, 0.15);">
+          <div class="metric-value" style="color: #ffb74d;">{{ promos_flash_count }}</div>
+          <div class="metric-label">⚡ Promos Flash</div>
+        </div>
+      {% endif %}
     </div>
   </section>
 
@@ -335,8 +341,13 @@
       {% for item in productos_data %}
         <div class="stock-item-row {% if not item.producto.disponible %}is-agotado{% endif %}" id="prod-row-{{ item.producto.id_producto }}">
           <div class="item-info-col">
-            <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
               <span class="item-title">{{ item.producto.nombre }}</span>
+              {% if item.promo_flash %}
+                <span class="badge badge-flash" title="Expira a las {{ item.promo_flash.expira_en|time:'H:i' }} hrs">
+                  ⚡ PROMO FLASH (${{ item.promo_flash.precio_oferta }})
+                </span>
+              {% endif %}
               {% if item.es_menu_dia %}
                 <span class="badge" style="background: var(--inacap-navy); color: #fff;">Menú Casino</span>
               {% endif %}

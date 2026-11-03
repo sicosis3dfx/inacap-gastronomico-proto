@@ -137,11 +137,16 @@
     background: #ffffff;
     border-radius: var(--radius-sm);
     padding: 14px;
-    border: 1px solid #ffcc80;
-    box-shadow: var(--shadow-sm);
+    border: 1.5px solid #ff9800;
+    box-shadow: 0 3px 10px rgba(255, 152, 0, 0.15);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .flash-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 152, 0, 0.25);
   }
   .flash-price-strike {
     text-decoration: line-through;
@@ -207,6 +212,12 @@
   }
   .card-producto.is-agotado .producto-img {
     filter: grayscale(80%) opacity(0.7);
+  }
+
+  /* DESTACADO ESPECIAL: PROMO FLASH (RF05) */
+  .card-producto.is-promo-flash {
+    border: 2px solid #ff9800;
+    box-shadow: 0 4px 16px rgba(255, 152, 0, 0.22);
   }
 
   /* DESTACADO ESPECIAL: MENÚ VEGANO (RF02) */
@@ -384,17 +395,20 @@
         <h2 class="flash-deals-title">
           ⚡ Promociones Flash por Tiempo Limitado
         </h2>
-        <span class="badge badge-promo">Ofertas del Día</span>
+        <span class="badge badge-flash">⚡ OFERTAS DEL DÍA</span>
       </div>
       <div class="flash-grid">
         {% for promo in promos_flash %}
           <div class="flash-card">
             <div>
-              <div style="font-size: 0.75rem; font-weight: 700; color: #e65100; text-transform: uppercase;">
-                {{ promo.local.nombre }}
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; flex-wrap: wrap;">
+                <span class="badge badge-flash">⚡ PROMO FLASH</span>
+                <span style="font-size: 0.75rem; font-weight: 700; color: #e65100; text-transform: uppercase;">
+                  {{ promo.local.nombre }}
+                </span>
               </div>
-              <strong style="font-size: 0.98rem; display: block;">{{ promo.producto.nombre }}</strong>
-              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+              <strong style="font-size: 1.02rem; display: block; color: var(--text-main);">{{ promo.producto.nombre }}</strong>
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">
                 ⏱️ Expira: <strong>{{ promo.expira_en|time:"H:i" }} hrs</strong>
               </div>
             </div>
@@ -469,7 +483,7 @@
               </h3>
               <div class="products-grid">
                 {% for item in grupo.menus_veganos %}
-                  <div class="card-producto is-vegano {% if not item.disponible %}is-agotado{% endif %}">
+                  <div class="card-producto is-vegano {% if item.promo_flash %}is-promo-flash{% endif %} {% if not item.disponible %}is-agotado{% endif %}">
                     <div class="vegano-top-banner">
                       <span>🌱 100% Vegano Destacado</span>
                       <span>Opción Saludable</span>
@@ -483,6 +497,9 @@
                       {% endif %}
 
                       <div class="floating-badges">
+                        {% if item.promo_flash %}
+                          <span class="badge badge-flash">⚡ PROMO FLASH</span>
+                        {% endif %}
                         {% if not item.disponible %}
                           <span class="badge badge-agotado">⛔ AGOTADO</span>
                         {% else %}
@@ -508,7 +525,14 @@
                       {% endif %}
 
                       <div class="card-footer-price">
-                        <span class="precio-tag">${{ item.precio_regular }}</span>
+                        {% if item.promo_flash %}
+                          <div>
+                            <span class="flash-price-strike">${{ item.precio_regular }}</span>
+                            <span class="precio-tag" style="color: #d84315;">${{ item.promo_flash.precio_oferta }}</span>
+                          </div>
+                        {% else %}
+                          <span class="precio-tag">${{ item.precio_regular }}</span>
+                        {% endif %}
                         {% if not item.disponible %}
                           <strong style="color: var(--status-agotado); font-size: 0.85rem;">Sin Stock</strong>
                         {% endif %}
@@ -523,7 +547,7 @@
           <!-- Resto de productos o alternativas tradicionales del Casino y Food Trucks -->
           <div class="products-grid">
             {% for item in grupo.otros_productos %}
-              <div class="card-producto {% if not item.disponible %}is-agotado{% endif %}">
+              <div class="card-producto {% if item.promo_flash %}is-promo-flash{% endif %} {% if not item.disponible %}is-agotado{% endif %}">
                 <div class="producto-img-container">
                   {% if item.imagen_url %}
                     <img src="{{ item.imagen_url }}" alt="{{ item.nombre }}" class="producto-img" loading="lazy">
@@ -534,6 +558,9 @@
                   {% endif %}
 
                   <div class="floating-badges">
+                    {% if item.promo_flash %}
+                      <span class="badge badge-flash">⚡ PROMO FLASH</span>
+                    {% endif %}
                     <!-- BADGE ROJO AGOTADO (RF03 / HU04) -->
                     {% if not item.disponible %}
                       <span class="badge badge-agotado">⛔ AGOTADO</span>
@@ -562,7 +589,14 @@
                   {% endif %}
 
                   <div class="card-footer-price">
-                    <span class="precio-tag">${{ item.precio_regular }}</span>
+                    {% if item.promo_flash %}
+                      <div>
+                        <span class="flash-price-strike">${{ item.precio_regular }}</span>
+                        <span class="precio-tag" style="color: #d84315;">${{ item.promo_flash.precio_oferta }}</span>
+                      </div>
+                    {% else %}
+                      <span class="precio-tag">${{ item.precio_regular }}</span>
+                    {% endif %}
                     {% if not item.disponible %}
                       <strong style="color: var(--status-agotado); font-size: 0.85rem;">Agotado</strong>
                     {% endif %}

@@ -86,6 +86,20 @@ def catalogo_publico(request):
         for m in MenuDia.objects.filter(local__activo=True).select_related('local')
     }
 
+    # Promociones Flash vigentes con cuenta regresiva activa (RF05)
+    ahora = timezone.now()
+    promos_flash_activas = list(
+        PromoFlash.objects.filter(
+            activa=True,
+            expira_en__gt=ahora,
+            local__activo=True,
+            producto__disponible=True,
+        )
+        .select_related('producto', 'local')
+        .order_by('expira_en')
+    )
+    promos_flash_map = {pf.producto_id: pf for pf in promos_flash_activas}
+
     # Agrupación de productos por local para la presentación visual
     locales_activos = Local.objects.filter(activo=True).order_by('nombre')
     locales_con_productos = []
@@ -97,8 +111,9 @@ def catalogo_publico(request):
 
         prods_local = [p for p in productos_qs if p.local_id == loc.id_local]
 
-        # Inyectamos el objeto MenuDia si corresponde a una especialización
+        # Inyectamos el objeto MenuDia y PromoFlash si corresponde
         for p in prods_local:
+            p.promo_flash = promos_flash_map.get(p.id_producto)
             if p.id_producto in menus_dia_map:
                 p.es_menu_dia = True
                 p.menu_info = menus_dia_map[p.id_producto]
@@ -118,26 +133,13 @@ def catalogo_publico(request):
             'total_items': len(prods_local),
         })
 
-    # Promociones Flash vigentes con cuenta regresiva activa (RF05)
-    ahora = timezone.now()
-    promos_flash_activas = (
-        PromoFlash.objects.filter(
-            activa=True,
-            expira_en__gt=ahora,
-            local__activo=True,
-            producto__disponible=True,
-        )
-        .select_related('producto', 'local')
-        .order_by('expira_en')[:4]
-    )
-
     context = {
         'locales_con_productos': locales_con_productos,
         'todos_locales': locales_activos,
         'filtro_junaeb': filtro_junaeb,
         'local_seleccionado': int(local_id_param) if local_id_param.isdigit() else None,
         'query_busqueda': query_busqueda,
-        'promos_flash': promos_flash_activas,
+        'promos_flash': promos_flash_activas[:4],
         'total_resultados': len(productos_qs),
     }
 
@@ -216,12 +218,23 @@ def panel_operador(request):
             MenuDia.objects.filter(local=local).values_list('id_producto', flat=True)
         )
 
+    # Identificación de promociones flash activas del local (RF05)
+    ahora = timezone.now()
+    promos_flash_local_map = {
+        pf.producto_id: pf
+        for pf in PromoFlash.objects.filter(
+            local=local, activa=True, expira_en__gt=ahora
+        )
+    }
+
     productos_data = []
     for p in productos_qs:
         es_menu = p.id_producto in menus_dia_ids
+        promo = promos_flash_local_map.get(p.id_producto)
         productos_data.append({
             'producto': p,
             'es_menu_dia': es_menu,
+            'promo_flash': promo,
         })
 
     # Métricas operativas del turno
@@ -229,6 +242,7 @@ def panel_operador(request):
     disponibles_count = productos_qs.filter(disponible=True).count()
     agotados_count = productos_qs.filter(disponible=False).count()
     junaeb_count = productos_qs.filter(acepta_junaeb=True).count()
+    promos_flash_count = len(promos_flash_local_map)
 
     context = {
         'local': local,
@@ -237,6 +251,7 @@ def panel_operador(request):
         'disponibles_count': disponibles_count,
         'agotados_count': agotados_count,
         'junaeb_count': junaeb_count,
+        'promos_flash_count': promos_flash_count,
         'form_producto': ProductoForm(),
         'form_menu': MenuDiaForm() if local.tipo == Local.TIPO_CASINO else None,
     }
