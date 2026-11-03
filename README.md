@@ -55,26 +55,37 @@ Este proyecto implementa y despliega el **Sistema Centralizado de Publicación y
    - Interfaz pública responsiva adaptada a dispositivos móviles para la consulta rápida de los estudiantes.
    - **Filtro Dinámico JUNAEB (RF04):** Mecanismo transparente mediante parámetro URL `?junaeb=1` y botón toggle interactivo para estudiantes beneficiarios de la Beca BAES.
    - **Inclusión Dietaria (Casino Central):** Destacado visual prioritario para el menú vegano del día (`🌱 100% Vegano`) frente a las opciones tradicionales.
-   - **Insignias de Estado en Tiempo Real:** Badges visuales inmediatos para productos `✅ Disponible` y `⛔ AGOTADO` (RF03).
+   - **Insignias de Estado en Tiempo Real:** Badges visuales inmediatos para productos `✅ Disponible`, `⛔ AGOTADO` (RF03) y el nuevo distintivo interactivo animado **`⚡ PROMO FLASH`** (RF05) con despliegue de precio de oferta y precio anterior tachado.
 
 4. **Funcionalidad Estrella: Switch Asíncrono de Stock en 1 Clic (RF03 / HU04):**
    - **Panel Privado del Operador (`/panel/`):** Vista protegida bajo autenticación y asignación de local del usuario en sesión (`@login_required`).
    - **Conmutación en 1 Clic:** Interruptor táctil interactivo programado con JavaScript `fetch()` hacia el endpoint `POST /api/producto/<pk>/stock/`.
    - **Rendimiento Ultrarrápido:** Mutación de disponibilidad persistida en Supabase y reflejada en menos de **200 milisegundos** sin recargar la página (cumpliendo con creces el RNF02 < 2 segundos).
 
-5. **Seguridad Robusta bajo OWASP Top 10 y Ley Chilena N° 21.459 (Indicador 3.1.2 y 3.1.3):**
+5. **Módulo de Gestión de Promociones Flash en Tiempo Real (RF05):**
+   - **Autonomía Operativa Descentralizada:** Cada encargado de local puede formular, editar y activar ofertas relámpago directamente desde su panel operativo (`/panel/`), eliminando la dependencia previa de la administración central.
+   - **Configuración de Precios y Temporizador Programado:** Permite ajustar el precio regular, fijar el precio de oferta con descuento y definir la duración de vigencia (30 min, 1 hr, 2 hrs, 3 hrs o jornada completa).
+   - **Endpoint Asíncrono Seguro (`POST /api/producto/<pk>/promo-flash/`):** Activación y desactivación en 1 clic mediante llamadas asíncronas con la API `fetch()`, calculando automáticamente la estampa temporal de expiración (`expira_en`) con retroalimentación Toast inmediata.
+   - **Destacado Visual Multicapa:** Los productos en oferta activa se sincronizan de inmediato en el catálogo público:
+     - Lucen el distintivo animado `⚡ PROMO FLASH` con efecto de pulso luminoso en la tarjeta.
+     - Destacan con un borde perimetral naranja (`is-promo-flash`) y muestran el precio original tachado junto al precio de oferta.
+     - Se integran automáticamente a la marquesina superior de *Promociones Flash por Tiempo Limitado* con su hora límite de expiración.
+   - **Métricas en Vivo del Turno:** Chip dinámico en el panel del operador que monitoriza el total de ofertas flash vigentes en tiempo real.
+
+6. **Seguridad Robusta bajo OWASP Top 10 y Ley Chilena N° 21.459 (Indicador 3.1.2 y 3.1.3):**
    - **OWASP A01 (Broken Access Control) & Art. 2° Ley 21.459:** Aislamiento estricto de datos en el ORM `Producto.objects.filter(local__operador=request.user)`. Si un usuario intenta modificar o conmutar stock de un local ajeno (ataque IDOR/BOLA), el backend lo bloquea retornando **HTTP 403 Forbidden**.
+   - **Estandarización RBAC con Grupos Institucionales:** Implementación del rol `Encargados de Locales Permisos Aislados`, centralizando los permisos mínimos necesarios (`add/change/view` sobre productos, menús y promociones flash) mientras que la lógica de `get_queryset()` y `formfield_for_foreignkey()` en `admin.py` y `views.py` confina el acceso únicamente a los registros del local asignado.
    - **OWASP A02 (Cryptographic Failures):** Aislamiento estricto de secretos (`SECRET_KEY`, `DATABASE_URL`) en variables de entorno `.env` (excluidas del control de versiones). Contraseñas de operadores cifradas mediante PBKDF2/SHA-256 en Django Auth y tráfico 100% bajo HTTPS/TLS 1.3.
    - **OWASP A03 (Injection / XSS) & Art. 4° Ley 21.459:** Uso estricto del ORM parametrizado (cero consultas SQL crudas). Implementación de la función `sanear_texto_seguro` en `forms.py` utilizando expresiones regulares y `strip_tags` para despojar bloques `<script>` y `<style>` maliciosos.
    - **Protección CSRF:** Inyección obligatoria del encabezado `X-CSRFToken` en cada llamada asíncrona.
    - **Integridad de Django Admin:** Corrección de la directiva `admin.E122` asegurando coherencia entre `list_display` y `list_editable`.
 
-6. **Despliegue Continuo Serverless en Vercel con WhiteNoise (PaaS / IaaS):**
+7. **Despliegue Continuo Serverless en Vercel con WhiteNoise (PaaS / IaaS):**
    - Despliegue automatizado en **Vercel PaaS** mediante integración continua (CI/CD) conectado al repositorio GitHub.
    - Servido de archivos estáticos optimizado con compresión mediante `whitenoise.middleware.WhiteNoiseMiddleware` apuntando a `staticfiles/`.
    - Soporte elástico para absorber la concurrencia masiva durante el bloque de almuerzo (12:30 a 14:30 hrs).
 
-7. **Gestión Ágil con Metodología SCRUM (Indicador Transversal):**
+8. **Gestión Ágil con Metodología SCRUM (Indicador Transversal):**
    - Ejecución estructurada en **3 Sprints** iterativos con un total de **35 Story Points (SP)** completados al 100% (*Done*).
    - Tablero Kanban en **Trello Workspace** con control de Definition of Done (DoD), criterios de aceptación y matrices de trazabilidad.
 
@@ -89,7 +100,7 @@ Este proyecto implementa y despliega el **Sistema Centralizado de Publicación y
 | **Base de Datos (DBaaS)** | Supabase (PostgreSQL Cloud) | Persistencia relacional dedicada con TLS 1.3 y pgBouncer |
 | **Plataforma Cloud (PaaS)** | Vercel Serverless WSGI | Alojamiento serverless elástico con escalamiento automático |
 | **Distribución de Estáticos** | WhiteNoise 6.9 | Compresión y entrega de CSS, JS e imágenes institucionales |
-| **Cliente / Asincronía** | JavaScript Fetch API + X-CSRFToken | Switch asíncrono de stock en 1 clic (< 200 ms) |
+| **Cliente / Asincronía** | JavaScript Fetch API + X-CSRFToken | Switch asíncrono de stock en 1 clic (< 200 ms) y gestión de Promociones Flash en vivo |
 | **Seguridad y Cifrado** | OWASP Top 10 + PBKDF2 / TLS 1.3 | Sanitización de entradas, RBAC y blindaje anti-IDOR |
 | **Control de Versiones** | Git + GitHub | Integración y despliegue continuo (CI/CD) |
 | **Gestión de Proyecto** | Marco Ágil SCRUM (Trello) | Sprints, estimación en Planning Poker y control de DoD |
@@ -124,3 +135,5 @@ python manage.py test gastronomia
 * **Filtro Directo JUNAEB:** [https://inacap-gastronomico-proto.vercel.app/?junaeb=1](https://inacap-gastronomico-proto.vercel.app/?junaeb=1)
 * **Panel de Operadores de Locales:** [https://inacap-gastronomico-proto.vercel.app/panel/](https://inacap-gastronomico-proto.vercel.app/panel/)
 * **Panel Administrativo Django:** [https://inacap-gastronomico-proto.vercel.app/admin/](https://inacap-gastronomico-proto.vercel.app/admin/)
+* **Endpoint API Stock (Asíncrono):** `POST /api/producto/<id>/stock/`
+* **Endpoint API Promo Flash (Asíncrono):** `POST /api/producto/<id>/promo-flash/`
