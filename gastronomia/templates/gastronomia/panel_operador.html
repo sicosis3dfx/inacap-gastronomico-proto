@@ -250,6 +250,11 @@
     color: var(--text-main);
   }
 
+  /* UTILIDADES */
+  .d-none {
+    display: none !important;
+  }
+
   /* BOTÓN Y BANDEJA PROMO FLASH (RF05) */
   .btn-promo-toggle {
     padding: 7px 14px;
@@ -488,8 +493,7 @@
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
               <span class="item-title">{{ item.producto.nombre }}</span>
               <span id="badge-flash-{{ item.producto.id_producto }}"
-                    class="badge badge-flash"
-                    style="{% if not item.promo_flash %}display: none;{% endif %}"
+                    class="badge badge-flash {% if not item.promo_flash %}d-none{% endif %}"
                     title="Expira a las {{ item.promo_flash.expira_en|time:'H:i' }} hrs">
                 ⚡ PROMO FLASH (<span id="badge-flash-price-{{ item.producto.id_producto }}">${{ item.promo_flash.precio_oferta }}</span>)
               </span>
@@ -513,7 +517,8 @@
             <button type="button"
                     class="btn-promo-toggle {% if item.promo_flash %}active{% endif %}"
                     id="btn-promo-toggle-{{ item.producto.id_producto }}"
-                    onclick="togglePromoTray({{ item.producto.id_producto }});"
+                    data-id="{{ item.producto.id_producto }}"
+                    onclick="togglePromoTray(this.dataset.id);"
                     title="Configurar precio y duración de Promoción Flash">
               ⚡ {% if item.promo_flash %}Promo Activa{% else %}Configurar Promo{% endif %}
             </button>
@@ -537,15 +542,15 @@
           </div>
 
           <!-- BANDEJA DESPLEGABLE DE CONFIGURACIÓN PROMO FLASH (RF05) -->
-          <div class="promo-config-tray" id="promo-tray-{{ item.producto.id_producto }}" style="display: none;">
+          <div class="promo-config-tray d-none" id="promo-tray-{{ item.producto.id_producto }}">
             <div class="promo-tray-header">
               <span style="font-weight: 800; font-size: 0.88rem; color: #e65100; display: flex; align-items: center; gap: 6px;">
                 ⚡ Gestión de Promoción Flash &bull; {{ item.producto.nombre }}
               </span>
-              <button type="button" class="btn-close-tray" onclick="togglePromoTray({{ item.producto.id_producto }});" title="Cerrar">&times;</button>
+              <button type="button" class="btn-close-tray" data-id="{{ item.producto.id_producto }}" onclick="togglePromoTray(this.dataset.id);" title="Cerrar">&times;</button>
             </div>
 
-            <div class="promo-status-banner" id="promo-status-{{ item.producto.id_producto }}" style="{% if not item.promo_flash %}display: none;{% endif %}">
+            <div class="promo-status-banner {% if not item.promo_flash %}d-none{% endif %}" id="promo-status-{{ item.producto.id_producto }}">
               <div>🔥 <strong>¡Promoción Flash Actualmente Vigente!</strong></div>
               <div style="font-size: 0.8rem; margin-top: 2px;">
                 Precio rebajado: <strong id="status-oferta-{{ item.producto.id_producto }}">${{ item.promo_flash.precio_oferta }}</strong> &bull; Expira a las: <strong id="status-expira-{{ item.producto.id_producto }}">{{ item.promo_flash.expira_en|time:'H:i' }} hrs</strong>
@@ -569,7 +574,7 @@
                 <input type="number"
                        id="input-oferta-{{ item.producto.id_producto }}"
                        class="promo-field-input promo-oferta-highlight"
-                       placeholder="Ej: {% if item.promo_flash %}{{ item.promo_flash.precio_oferta }}{% else %}2990{% endif %}"
+                       placeholder="Ej: 2990"
                        value="{% if item.promo_flash %}{{ item.promo_flash.precio_oferta }}{% endif %}"
                        min="100"
                        step="100">
@@ -589,15 +594,16 @@
               <div class="promo-tray-actions">
                 <button type="button"
                         class="btn-activar-promo"
-                        onclick="guardarPromoFlash({{ item.producto.id_producto }}, 'activar');">
+                        data-id="{{ item.producto.id_producto }}"
+                        onclick="guardarPromoFlash(this.dataset.id, 'activar');">
                   🚀 Guardar y Activar Promo
                 </button>
 
                 <button type="button"
                         id="btn-desactivar-promo-{{ item.producto.id_producto }}"
-                        class="btn-desactivar-promo"
-                        style="{% if not item.promo_flash %}display: none;{% endif %}"
-                        onclick="guardarPromoFlash({{ item.producto.id_producto }}, 'desactivar');">
+                        class="btn-desactivar-promo {% if not item.promo_flash %}d-none{% endif %}"
+                        data-id="{{ item.producto.id_producto }}"
+                        onclick="guardarPromoFlash(this.dataset.id, 'desactivar');">
                   ⛔ Desactivar Promo
                 </button>
               </div>
@@ -795,11 +801,7 @@
   function togglePromoTray(prodId) {
     const tray = document.getElementById(`promo-tray-${prodId}`);
     if (!tray) return;
-    if (tray.style.display === 'none' || tray.style.display === '') {
-      tray.style.display = 'block';
-    } else {
-      tray.style.display = 'none';
-    }
+    tray.classList.toggle('d-none');
   }
 
   /**
@@ -855,19 +857,24 @@
 
       if (data.activa) {
         // Estado Activado
-        if (badgeFlash) badgeFlash.style.display = 'inline-flex';
+        if (badgeFlash) {
+          badgeFlash.classList.remove('d-none');
+          badgeFlash.style.display = 'inline-flex';
+          badgeFlash.title = `Expira a las ${data.expira_hora} hrs`;
+        }
         if (badgeFlashPrice) badgeFlashPrice.textContent = `$${data.precio_oferta}`;
-        if (badgeFlash) badgeFlash.title = `Expira a las ${data.expira_hora} hrs`;
         if (btnToggle) {
           btnToggle.classList.add('active');
           btnToggle.innerHTML = '⚡ Promo Activa';
         }
         if (statusBanner) {
+          statusBanner.classList.remove('d-none');
           statusBanner.style.display = 'flex';
           if (statusOferta) statusOferta.textContent = `$${data.precio_oferta}`;
           if (statusExpira) statusExpira.textContent = `${data.expira_hora} hrs`;
         }
         if (btnDesactivar) {
+          btnDesactivar.classList.remove('d-none');
           btnDesactivar.style.display = 'inline-flex';
         }
         if (priceDisplay && data.precio_regular) {
@@ -880,15 +887,20 @@
         mostrarToast(`✔️ ${data.mensaje}`, 'success');
       } else {
         // Estado Desactivado
-        if (badgeFlash) badgeFlash.style.display = 'none';
+        if (badgeFlash) {
+          badgeFlash.classList.add('d-none');
+          badgeFlash.style.display = 'none';
+        }
         if (btnToggle) {
           btnToggle.classList.remove('active');
           btnToggle.innerHTML = '⚡ Configurar Promo';
         }
         if (statusBanner) {
+          statusBanner.classList.add('d-none');
           statusBanner.style.display = 'none';
         }
         if (btnDesactivar) {
+          btnDesactivar.classList.add('d-none');
           btnDesactivar.style.display = 'none';
         }
         if (inputOferta) {
