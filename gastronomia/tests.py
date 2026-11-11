@@ -241,3 +241,191 @@ class FormularioOWASPA03Test(TestCase):
         })
         self.assertFalse(form.is_valid())
         self.assertIn('imagen_url', form.errors)
+
+
+class PromocionesFlashAPITest(TestCase):
+    """Pruebas funcionales y de seguridad para el endpoint de Promo Flash (RF05)."""
+
+    def setUp(self):
+        self.client = Client()
+        self.u_casino = User.objects.create_user(username='op_casino_flash', password='Password123!')
+        self.local_casino = Local.objects.create(nombre="Casino Central Flash", tipo=Local.TIPO_CASINO, activo=True, operador=self.u_casino)
+
+        self.u_otro = User.objects.create_user(username='op_otro_flash', password='Password123!')
+        self.local_otro = Local.objects.create(nombre="Food Truck Flash", tipo=Local.TIPO_FOOD_TRUCK, activo=True, operador=self.u_otro)
+
+        self.producto = Producto.objects.create(
+            local=self.local_casino,
+            nombre="Promo Pizza Individual",
+            precio_regular=3000,
+            disponible=True
+        )
+
+    def test_activar_promo_flash_exitoso(self):
+        """RF05: Activación de promo flash con cálculo de expiración y precio oferta."""
+        self.client.force_login(self.u_casino)
+        url = reverse('gestionar_promo_flash', args=[self.producto.pk])
+        payload = {
+            'action': 'activar',
+            'precio_oferta': 2100,
+            'duracion_minutos': 45
+        }
+        response = self.client.post(
+            url,
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data['success'])
+        self.assertTrue(data['activa'])
+        self.assertEqual(data['precio_oferta'], 2100)
+
+        # Verificar persistencia en base de datos
+        promo = PromoFlash.objects.filter(producto=self.producto, activa=True).first()
+        self.assertIsNotNone(promo)
+        self.assertEqual(promo.precio_oferta, 2100)
+        self.assertTrue(promo.esta_vigente)
+
+    def test_desactivar_promo_flash_exitoso(self):
+        """RF05: Desactivación manual de una promo flash activa."""
+        self.client.force_login(self.u_casino)
+        PromoFlash.objects.create(
+            local=self.local_casino,
+            producto=self.producto,
+            precio_oferta=2000,
+            expira_en=timezone.now() + timedelta(hours=1),
+            activa=True
+        )
+        url = reverse('gestionar_promo_flash', args=[self.producto.pk])
+        response = self.client.post(
+            url,
+            data=json.dumps({'action': 'desactivar'}),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data['success'])
+        self.assertFalse(data['activa'])
+
+        # Verificar que ya no hay promociones activas
+        promos_activas = PromoFlash.objects.filter(producto=self.producto, activa=True)
+        self.assertEqual(promos_activas.count(), 0)
+
+    def test_activar_promo_precio_invalido_retorna_400(self):
+        """Validación de robustez: Precio menor o igual a cero retorna HTTP 400."""
+        self.client.force_login(self.u_casino)
+        url = reverse('gestionar_promo_flash', args=[self.producto.pk])
+        response = self.client.post(
+            url,
+            data=json.dumps({'action': 'activar', 'precio_oferta': -500, 'duracion_minutos': 30}),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+        data = response.json()
+        self.assertFalse(data['success'])
+
+    def test_activar_promo_local_ajeno_bloqueado_owasp_a01(self):
+        """OWASP A01 / Ley N° 21.459: Intento de activar promo en local ajeno genera HTTP 403."""
+        self.client.force_login(self.u_otro)
+        url = reverse('gestionar_promo_flash', args=[self.producto.pk])
+        response = self.client.post(
+            url,
+            data=json.dumps({'action': 'activar', 'precio_oferta': 1500, 'duracion_minutos': 30}),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 403)
+        data = response.json()
+        self.assertFalse(data['success'])
+        self.assertIn('Acceso denegado', data['error'])
+
+
+class SeguridadRBACTest(TestCase):
+    """Validación de asignación de roles y control de privilegios (RBAC e ISO 27001)."""
+
+    def setUp(self):
+        from django.contrib.auth.models import Group, Permission
+        from django.contrib.contenttypes.models import ContentType
+
+        # Creación del grupo formal documentado
+        self.grupo_encargados, _ = Group.objects.get_or_create(
+            name="Encargados de Locales Permisos Aislados"
+        )
+        ct_prod = ContentType.objects.get_for_model(Producto)
+        ct_promo = ContentType.objects.get_for_model(PromoFlash)
+
+        permisos = Permission.objects.filter(
+            content_type__in=[ct_prod, ct_promo],
+            codename__in=[
+                'add_producto', 'change_producto', 'delete_producto', 'view_producto',
+                'add_promoflash', 'change_promoflash', 'delete_promoflash', 'view_promoflash'
+            ]
+        )
+        self.grupo_encargados.permissions.set(permisos)
+
+        # Usuario asignado al rol
+        self.operador_rol = User.objects.create_user(username='operador_rbac', password='Password123!')
+        self.operador_rol.groups.add(self.grupo_encargados)
+
+    def test_usuario_tiene_permisos_modelo_pero_no_superuser(self):
+        """Principio de mínimo privilegio (ISO 27001 A.5.15): No tiene is_staff ni is_superuser."""
+        self.assertFalse(self.operador_rol.is_staff)
+        self.assertFalse(self.operador_rol.is_superuser)
+        self.assertTrue(self.operador_rol.groups.filter(name="Encargados de Locales Permisos Aislados").exists())
+
+    def test_operador_tiene_permisos_especificos_producto(self):
+        """Verifica que el grupo otorga permisos granulares sobre Producto y PromoFlash."""
+        self.assertTrue(self.operador_rol.has_perm('gastronomia.change_producto'))
+        self.assertTrue(self.operador_rol.has_perm('gastronomia.change_promoflash'))
+        # No debe tener permisos sobre otros modelos críticos (ej: User, Group, Session)
+        self.assertFalse(self.operador_rol.has_perm('auth.change_user'))
+
+
+class RendimientoLatenciaISO25010Test(TestCase):
+    """Pruebas de eficiencia de desempeño (ISO/IEC 25010): Latencia < 200 ms."""
+
+    def setUp(self):
+        import time
+        self.time = time
+        self.client = Client()
+        self.user = User.objects.create_user(username='op_perf', password='Password123!')
+        self.local = Local.objects.create(nombre="Local Rendimiento", tipo=Local.TIPO_CASINO, activo=True, operador=self.user)
+        self.producto = Producto.objects.create(
+            local=self.local,
+            nombre="Café Espresso Rápido",
+            precio_regular=1200,
+            disponible=True
+        )
+        self.client.force_login(self.user)
+
+    def test_latencia_conmutacion_stock_menor_200ms(self):
+        """RF03 / HU04: Conmutación de stock asíncrona debe responder en menos de 200 ms."""
+        url = reverse('actualizar_stock', args=[self.producto.pk])
+        inicio = self.time.perf_counter()
+        response = self.client.post(
+            url,
+            data=json.dumps({'disponible': False}),
+            content_type='application/json'
+        )
+        fin = self.time.perf_counter()
+        latencia_ms = (fin - inicio) * 1000
+
+        self.assertEqual(response.status_code, 200)
+        # Verificación estricta del SLA de desempeño
+        self.assertLess(latencia_ms, 200.0, f"Latencia excedida: {latencia_ms:.2f} ms")
+
+    def test_latencia_promo_flash_menor_200ms(self):
+        """RF05: Activación de promo flash asíncrona debe responder en menos de 200 ms."""
+        url = reverse('gestionar_promo_flash', args=[self.producto.pk])
+        inicio = self.time.perf_counter()
+        response = self.client.post(
+            url,
+            data=json.dumps({'action': 'activar', 'precio_oferta': 990, 'duracion_minutos': 60}),
+            content_type='application/json'
+        )
+        fin = self.time.perf_counter()
+        latencia_ms = (fin - inicio) * 1000
+
+        self.assertEqual(response.status_code, 200)
+        self.assertLess(latencia_ms, 200.0, f"Latencia excedida: {latencia_ms:.2f} ms")
+

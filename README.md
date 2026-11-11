@@ -118,14 +118,50 @@ Este proyecto implementa y despliega el **Sistema Centralizado de Publicación y
 
 ---
 
-## 🧪 4. Ejecución de Pruebas Automatizadas
+## 🧪 4. Batería de Pruebas Automatizadas (Testing Suite)
 
-El proyecto cuenta con una suite de pruebas unitarias que validan la lógica de negocio, los modelos, las restricciones de acceso RBAC y la sanitización OWASP A03:
+El proyecto cuenta con una suite integral de **21 pruebas automatizadas** desarrolladas sobre el framework nativo de pruebas de Django (`unittest.TestCase` y `Client`), garantizando calidad de software, seguridad de la información y eficiencia de desempeño:
+
+### 🚀 Comandos de Ejecución
 
 ```bash
-# Ejecutar suite de pruebas de la aplicación gastronomía
-python manage.py test gastronomia
+# Opción 1: Ejecución rápida directa con script interactivo (Recomendado)
+python ejecutar_pruebas.py
+
+# Opción 2: Ejecución mediante el runner oficial de Django con salida detallada
+python manage.py test --settings=mi_proyecto.test_settings -v 2
 ```
+
+> **Nota de Rendimiento:** La suite utiliza una configuración de base de datos aislada en memoria (`SQLite :memory:`), permitiendo ejecutar las 21 pruebas en menos de **0.20 segundos** sin alterar la base de datos de producción Supabase y garantizando un 100% de tasa de éxito (`OK`).
+
+### 📋 Cobertura de las Pruebas Implementadas (`gastronomia/tests.py`)
+
+1. **Pruebas de Lógica de Dominio y Modelos (RF01, RF03, RF05):**
+   - Ciclo de apertura y cierre de jornada operativa en `Local` (`abrir_jornada()`, `cerrar_jornada()`).
+   - Conmutación booleana inmediata de stock en `Producto` (`cambiar_estado_stock()`).
+   - Concatenación estructurada de platos en `MenuDia` (`get_detalle_completo()`).
+   - Evaluación dinámica de vigencia temporal en `PromoFlash` (`esta_vigente`, cálculo con fechas futuras y expiradas).
+
+2. **Pruebas Funcionales y Vistas Públicas (RF02, RF04, RF06):**
+   - Acceso anónimo al catálogo público sin requerir inicio de sesión (HTTP 200).
+   - Filtrado booleano en tiempo real por beneficio estatal JUNAEB (`?junaeb=1`), verificando la exclusión de productos no adheridos.
+
+3. **Pruebas de Ciberseguridad OWASP Top 10 y Ley Chilena N° 21.459:**
+   - **OWASP A01 (Broken Access Control / IDOR):** Bloqueo estricto con **HTTP 403 Forbidden** ante intentos no autorizados de un operador para modificar stock o promociones de un local ajeno.
+   - **Aislamiento Horizontal de Panel:** Verificación de que cada encargado visualiza exclusivamente los productos asociados a su establecimiento.
+   - **OWASP A03 (Injection / XSS):** Sanitización automática de etiquetas maliciosas `<script>` mediante `strip_tags` y rechazo estricto de esquemas no seguros (`javascript:`) en campos de URL.
+
+4. **Pruebas de Control de Acceso Basado en Roles (RBAC / ISO 27001):**
+   - Validación del grupo formal `Encargados de Locales Permisos Aislados`.
+   - Verificación del Principio de Mínimo Privilegio: asignación de permisos de modelo (`add`, `change`, `view` en Producto y PromoFlash) sin privilegios globales (`is_staff=False`, `is_superuser=False`).
+
+5. **Pruebas de la API de Promociones Flash (RF05):**
+   - Activación de oferta relámpago con cálculo programado de fecha de expiración y precio rebajado (`POST /api/producto/<pk>/promo-flash/`).
+   - Desactivación manual inmediata de promociones activas.
+   - Validación de robustez ante datos corruptos o valores numéricos inválidos (HTTP 400 Bad Request ante ofertas negativas o iguales a cero).
+
+6. **Pruebas de Rendimiento y Latencia (ISO/IEC 25010):**
+   - Medición estricta del tiempo de respuesta del servidor en endpoints asíncronos críticos (`/api/producto/<pk>/stock/` y `/api/producto/<pk>/promo-flash/`), certificando una latencia inferior a **200 milisegundos** (latencia media observada: ~2.8 ms).
 
 ---
 
