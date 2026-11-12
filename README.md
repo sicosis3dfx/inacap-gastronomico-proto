@@ -1,7 +1,7 @@
-# Evaluación Sumativa 3 — Ingeniería de Software
+# Evaluación Sumativa 4 — Implementación, Pruebas y Calidad de Software (25%)
 
 **Institución:** INACAP — Sede Renca 2026  
-**Asignatura:** Ingeniería de Software  
+**Asignatura:** TI3043 — Ingeniería de Software  
 **Docente:** Oscarina Sanabria  
 **Integrantes:** Yoshua Castillo · Martín Tapia · Vicente Sagredo · Angelo Zamora  
 **Proyecto:** Sistema Centralizado de Publicación y Consulta Gastronómica INACAP Renca  
@@ -31,13 +31,13 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-## 📌 1. Explicación de los Resultados Conseguidos (Rúbrica - Indicadores 3.1.1, 3.1.2 y 3.1.3)
+## 📌 1. Explicación de los Resultados Conseguidos (Rúbrica - Criterios 3.1.3, 3.1.4 y 3.1.5)
 
 Este proyecto implementa y despliega el **Sistema Centralizado de Publicación y Consulta Gastronómica de INACAP Sede Renca**. La solución resuelve la asimetría informativa, aglomeraciones y largas filas en el horario de almuerzo del campus, permitiendo a los estudiantes consultar en tiempo real la oferta de menús, opciones con beneficio estatal JUNAEB y alternativas veganas del Casino Central y los tres Food Trucks, mientras que los concesionarios pueden conmutar el stock de sus productos en un solo clic desde sus teléfonos inteligentes.
 
 ### 🎯 Resultados Clave Implementados:
 
-1. **Arquitectura Cloud y Base de Datos en Producción con Supabase (Indicador 3.1.1):**
+1. **Arquitectura Cloud y Base de Datos en Producción con Supabase (Criterio 3.1.3):**
    - Implementación de modelo **DBaaS (Database-as-a-Service)** mediante **Supabase (PostgreSQL administrado)** con pgBouncer y cifrado en tránsito TLS 1.3 / en reposo AES-256 (*"Base de datos de producción - No SQLite"*).
    - Implementación de modelos relacionales en `gastronomia/models.py`:
      - `Local`: Establecimientos gastronómicos (Casino y Food Trucks) con métodos `abrir_jornada()` y `cerrar_jornada()`.
@@ -72,7 +72,7 @@ Este proyecto implementa y despliega el **Sistema Centralizado de Publicación y
      - Se integran automáticamente a la marquesina superior de *Promociones Flash por Tiempo Limitado* con su hora límite de expiración.
    - **Métricas en Vivo del Turno:** Chip dinámico en el panel del operador que monitoriza el total de ofertas flash vigentes en tiempo real.
 
-6. **Seguridad Robusta bajo OWASP Top 10 y Ley Chilena N° 21.459 (Indicador 3.1.2 y 3.1.3):**
+6. **Seguridad Robusta bajo OWASP Top 10 y Ley Chilena N° 21.459 (Criterios 3.1.3 y 3.1.5):**
    - **OWASP A01 (Broken Access Control) & Art. 2° Ley 21.459:** Aislamiento estricto de datos en el ORM `Producto.objects.filter(local__operador=request.user)`. Si un usuario intenta modificar o conmutar stock de un local ajeno (ataque IDOR/BOLA), el backend lo bloquea retornando **HTTP 403 Forbidden**.
    - **Estandarización RBAC con Grupos Institucionales:** Implementación del rol `Encargados de Locales Permisos Aislados`, centralizando los permisos mínimos necesarios (`add/change/view` sobre productos, menús y promociones flash) mientras que la lógica de `get_queryset()` y `formfield_for_foreignkey()` en `admin.py` y `views.py` confina el acceso únicamente a los registros del local asignado.
    - **OWASP A02 (Cryptographic Failures):** Aislamiento estricto de secretos (`SECRET_KEY`, `DATABASE_URL`) en variables de entorno `.env` (excluidas del control de versiones). Contraseñas de operadores cifradas mediante PBKDF2/SHA-256 en Django Auth y tráfico 100% bajo HTTPS/TLS 1.3.
@@ -85,8 +85,9 @@ Este proyecto implementa y despliega el **Sistema Centralizado de Publicación y
    - Servido de archivos estáticos optimizado con compresión mediante `whitenoise.middleware.WhiteNoiseMiddleware` apuntando a `staticfiles/`.
    - Soporte elástico para absorber la concurrencia masiva durante el bloque de almuerzo (12:30 a 14:30 hrs).
 
-8. **Gestión Ágil con Metodología SCRUM (Indicador Transversal):**
-   - Ejecución estructurada en **3 Sprints** iterativos con un total de **35 Story Points (SP)** completados al 100% (*Done*).
+8. **Gestión Ágil con Metodología SCRUM (Sprint 1 al Sprint 4):**
+   - Ejecución estructurada en **4 Sprints** iterativos con un total acumulado de **56 Story Points (SP)** completados al 100% (*Done*).
+   - **Sprint 4 enfocado en Testing Integral, Hardening de Seguridad (OWASP / ISO 27001) y Calidad de Software (ISO 25010).**
    - Tablero Kanban en **Trello Workspace** con control de Definition of Done (DoD), criterios de aceptación y matrices de trazabilidad.
 
 ---
