@@ -59,22 +59,28 @@ python -c "import os, django; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'm
 ### ¿Qué demuestra?
 La mitigación de la vulnerabilidad crítica **OWASP Top 10 A01 (Broken Access Control)** y el cumplimiento del **Artículo 2° de la Ley Chilena N° 21.459 de Delitos Informáticos** (acceso ilícito a sistemas informáticos). Un operador jamás puede modificar los productos de un local competidor.
 
+> ⚠️ **Regla Clave para provocar el 403:**  
+> El producto **DEBE EXISTIR** en la base de datos, pero debe pertenecer al local de otro operador.  
+> * Si estás logueado en el **Casino Central** (`operador_casino`), prueba alterando el **Producto ID 14** (*Café Espresso de Food Truck 1*).
+> * Si estás logueado en un **Food Truck**, prueba alterando el **Producto ID 1** (*Cazuela de Vacuno del Casino*).
+> *(Si usas un ID que no existe como el 99, Django arrojará 404 Not Found en lugar de 403).*
+
 ### 💻 Opción A: Desde la Consola del Navegador (F12)
-*(Envía una orden de cambio de stock forzando el ID de un producto de otro local)*
+*(Estando logueado en el Panel del Operador con la cuenta del Casino)*
 
 ```javascript
-// Suponiendo que el producto 99 pertenece a otro local o no es de tu propiedad
-fetch('/api/producto/99/stock/', {
+fetch('/api/producto/14/stock/', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
     'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/) || [])[1]
   },
   body: JSON.stringify({ disponible: false })
-}).then(r => r.json().then(data => {
+}).then(async r => {
+  const data = r.headers.get('content-type')?.includes('application/json') ? await r.json() : await r.text();
   console.log("%c🔒 RESPUESTA HTTP " + r.status + " (FORBIDDEN)", "color: orange; font-size: 14px; font-weight: bold;");
-  console.log("Detalle de Bloqueo Legal:", data);
-}));
+  console.log("Detalle de Bloqueo Legal (Ley 21.459 / OWASP A01):", data);
+});
 ```
 
 ### 🖥️ Opción B: Ejecución del Test Automatizado CP-12
@@ -83,7 +89,7 @@ fetch('/api/producto/99/stock/', {
 ```
 
 ### 🎙️ Lo que debe decir el expositor:
-> *"En esta prueba simulamos un ataque IDOR donde el operador del Food Truck intenta alterar el stock del Casino Central manipulando el ID en la petición. El sistema valida la pertenencia relacional en el ORM (`local__operador == request.user`) y deniega inmediatamente la operación con un **HTTP 403 Forbidden**, dando cumplimiento a la **Ley N° 21.459** sobre acceso indebido."*
+> *"En esta prueba simulamos un ataque IDOR donde el operador intenta alterar el stock de un producto ajeno (ID 14 de Food Truck 1). El sistema valida la pertenencia relacional en el ORM (`local__operador == request.user`) y deniega inmediatamente la operación con un **HTTP 403 Forbidden**, dando cumplimiento a la **Ley N° 21.459** sobre acceso indebido."*
 
 ---
 
