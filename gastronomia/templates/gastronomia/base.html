@@ -288,8 +288,56 @@
       100% { opacity: 1; }
     }
 
+    /* BOTÓN FLOTANTE VOLVER ARRIBA (SCROLL TO TOP) */
+    .btn-scroll-top {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--inacap-red);
+      color: #ffffff;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 4px 16px rgba(186, 12, 47, 0.35), 0 2px 6px rgba(0, 0, 0, 0.15);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 850;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(16px) scale(0.85);
+      transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                  background-color 0.2s ease,
+                  box-shadow 0.2s ease;
+    }
+    .btn-scroll-top.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+    .btn-scroll-top:hover {
+      background: var(--inacap-red-dark);
+      box-shadow: 0 6px 20px rgba(186, 12, 47, 0.45);
+    }
+    .btn-scroll-top:active {
+      transform: translateY(0) scale(0.92) !important;
+    }
+
     /* RESPONSIVE MOBILE TWEAKS (MINIMALISTA Y COMPACTO) */
     @media (max-width: 640px) {
+      .btn-scroll-top {
+        bottom: 18px;
+        right: 18px;
+        width: 40px;
+        height: 40px;
+      }
+      .btn-scroll-top svg {
+        width: 18px;
+        height: 18px;
+      }
       .header-topbar {
         font-size: 0.72rem;
         padding: 3px 8px;
@@ -392,6 +440,17 @@
     {% block content %}{% endblock %}
   </main>
 
+  <!-- Botón Flotante Scroll to Top (Volver Arriba Automático) -->
+  <button type="button"
+          id="btnScrollToTop"
+          class="btn-scroll-top"
+          aria-label="Volver al inicio de la página"
+          title="Volver al inicio de la página">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
+
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-content">
@@ -401,7 +460,7 @@
     </div>
   </footer>
 
-  <!-- Helper para CSRFToken en llamadas Fetch -->
+  <!-- Helper para CSRFToken en llamadas Fetch y Scroll to Top -->
   <script>
     function getCookie(name) {
       let cookieValue = null;
@@ -418,6 +477,37 @@
       return cookieValue;
     }
     const csrftoken = getCookie('csrftoken');
+
+    // Control de detección de scroll para botón flotante Volver Arriba
+    (function initScrollToTop() {
+      const btn = document.getElementById('btnScrollToTop');
+      if (!btn) return;
+
+      let isTicking = false;
+      function onScroll() {
+        if (window.scrollY > 180) {
+          btn.classList.add('show');
+        } else {
+          btn.classList.remove('show');
+        }
+        isTicking = false;
+      }
+
+      window.addEventListener('scroll', function() {
+        if (!isTicking) {
+          window.requestAnimationFrame(onScroll);
+          isTicking = true;
+        }
+      }, { passive: true });
+
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    })();
   </script>
 
   {% block extra_js %}{% endblock %}
