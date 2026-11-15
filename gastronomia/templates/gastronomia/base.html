@@ -288,19 +288,44 @@
       100% { opacity: 1; }
     }
 
-    /* RESPONSIVE MOBILE TWEAKS */
+    /* RESPONSIVE MOBILE TWEAKS (MINIMALISTA Y COMPACTO) */
     @media (max-width: 640px) {
+      .header-topbar {
+        font-size: 0.72rem;
+        padding: 3px 8px;
+        line-height: 1.25;
+      }
       .navbar-container {
         flex-direction: column;
         align-items: flex-start;
+        padding: 8px 12px;
+        gap: 8px;
+      }
+      .brand-logo-img {
+        height: 32px;
+      }
+      .brand-title {
+        font-size: 0.95rem;
+      }
+      .brand-subtitle {
+        font-size: 0.7rem;
       }
       .nav-actions {
         width: 100%;
         justify-content: flex-start;
         flex-wrap: wrap;
+        gap: 6px;
       }
-      .brand-title {
-        font-size: 1.05rem;
+      .nav-btn {
+        padding: 5px 10px;
+        font-size: 0.78rem;
+      }
+      .user-pill {
+        padding: 4px 10px;
+        font-size: 0.76rem;
+      }
+      main.main-content {
+        padding: 12px 10px;
       }
     }
   </style>

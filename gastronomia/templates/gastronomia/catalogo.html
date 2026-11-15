@@ -730,13 +730,38 @@
   }
 
   /* ========================================================
-     RESPONSIVE BREAKPOINTS (AJUSTE MÓVIL Y RESOLUCIÓN DE BOTONES)
+     RESPONSIVE BREAKPOINTS (MINIMALISTA, COMPACTO Y EFICIENTE)
      ======================================================== */
   @media (max-width: 820px) {
-    .hero-top-row { flex-direction: column; align-items: stretch; gap: 12px; margin-bottom: 0; }
-    .hero-search-row { width: 100%; }
-    .hero-unified { padding: 16px 14px 14px 14px; }
-    .hero-search-btn { justify-content: center; }
+    .hero-unified {
+      padding: 12px 14px 10px 14px;
+      margin-bottom: 12px;
+      border-radius: 14px;
+      box-shadow: 0 4px 14px rgba(155, 44, 48, 0.16);
+    }
+    .hero-top-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      margin-bottom: 0;
+    }
+    .hero-search-row {
+      width: 100%;
+      gap: 6px;
+    }
+    .hero-search-input {
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      border-radius: 18px;
+      box-shadow: none;
+    }
+    .hero-search-btn {
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      border-radius: 18px;
+      justify-content: center;
+      box-shadow: none;
+    }
 
     /* Barra superior del banner con Título + Botón Hamburguesa de Locales */
     .hero-header-mobile-bar {
@@ -751,8 +776,9 @@
       flex: 1;
     }
     .hero-title {
-      font-size: 1.18rem;
-      line-height: 1.2;
+      font-size: 1.02rem;
+      font-weight: 700;
+      line-height: 1.15;
       margin-bottom: 0;
       word-break: break-word;
     }
@@ -765,30 +791,30 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.18);
-      border: 1.5px solid rgba(255, 255, 255, 0.38);
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.32);
       color: #ffffff;
-      border-radius: 20px;
-      padding: 6px 14px;
-      font-size: 0.82rem;
+      border-radius: 16px;
+      padding: 4px 10px;
+      font-size: 0.76rem;
       font-weight: 700;
+      height: 30px;
       cursor: pointer;
       flex-shrink: 0;
       white-space: nowrap;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      box-shadow: none;
     }
     .hero-mobile-toggle-btn:hover {
-      background: rgba(255, 255, 255, 0.28);
-      border-color: rgba(255, 255, 255, 0.6);
-      transform: scale(1.03);
+      background: rgba(255, 255, 255, 0.26);
+      border-color: rgba(255, 255, 255, 0.5);
     }
     .hero-mobile-toggle-btn.is-active {
       background: #ffffff;
       color: #9b2c30;
       border-color: #ffffff;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     }
 
     @media (max-width: 420px) {
@@ -796,25 +822,25 @@
         display: none;
       }
       .hero-mobile-toggle-btn {
-        width: 38px;
-        height: 38px;
+        width: 30px;
+        height: 30px;
         padding: 0;
-        border-radius: 10px;
+        border-radius: 8px;
         justify-content: center;
       }
     }
 
     .hero-toggle-badge-dot {
       position: absolute;
-      top: 3px;
-      right: 3px;
-      width: 8px;
-      height: 8px;
+      top: 2px;
+      right: 2px;
+      width: 7px;
+      height: 7px;
       background: #4ade80;
-      border: 1.5px solid #9b2c30;
+      border: 1px solid #9b2c30;
       border-radius: 50%;
       display: inline-block;
-      box-shadow: 0 0 6px #4ade80;
+      box-shadow: 0 0 4px #4ade80;
     }
     .hero-mobile-toggle-btn.is-active .hero-toggle-badge-dot {
       display: none;
@@ -822,18 +848,19 @@
 
     .hero-mobile-toggle-btn .hero-toggle-icon {
       display: inline-block;
+      font-size: 0.95rem;
       transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .hero-mobile-toggle-btn.is-active .hero-toggle-icon {
       transform: rotate(90deg);
     }
 
-    /* BANDEJA DE FILTROS: TRANSICIÓN SUAVE BIDIRECCIONAL (EXPANDIR Y COMPRIMIR) */
+    /* BANDEJA DE FILTROS MINIMALISTA: SUAVE, COMPACTA Y SIN CORTES */
     .hero-controls-shelf {
       display: flex;
       flex-direction: column;
       align-items: stretch;
-      gap: 10px;
+      gap: 6px;
       max-height: 0;
       opacity: 0;
       overflow: hidden;
@@ -842,63 +869,144 @@
       padding-bottom: 0;
       border-top: 1px solid transparent;
       pointer-events: none;
-      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                  opacity 0.25s ease,
-                  margin-top 0.3s ease,
-                  padding-top 0.3s ease,
-                  padding-bottom 0.3s ease,
-                  border-color 0.25s ease;
+      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.2s ease,
+                  margin-top 0.25s ease,
+                  padding-top 0.25s ease,
+                  padding-bottom 0.25s ease,
+                  border-color 0.2s ease;
     }
     .hero-controls-shelf.is-open {
-      max-height: 750px;
+      max-height: 520px;
       opacity: 1;
-      margin-top: 12px;
-      padding-top: 14px;
-      padding-bottom: 8px;
-      border-top-color: rgba(255, 255, 255, 0.2);
+      margin-top: 8px;
+      padding-top: 8px;
+      padding-bottom: 4px;
+      border-top-color: rgba(255, 255, 255, 0.18);
       pointer-events: auto;
     }
 
-    .btn-junaeb-toggle { justify-content: center; width: 100%; }
-
-    /* Envoltorio de pestañas cuando se despliegan */
-    .local-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      overflow-x: visible;
-      gap: 8px;
-      padding: 4px 0 2px 0;
-      margin: 0;
+    .hero-controls-left {
+      gap: 6px;
       width: 100%;
     }
-    .tab-item {
-      padding: 8px 14px;
-      font-size: 0.83rem;
-      flex: 1 1 auto;
+
+    .btn-junaeb-toggle {
       justify-content: center;
-      text-align: center;
-      min-width: 110px;
+      width: 100%;
+      padding: 5px 12px;
+      font-size: 0.76rem;
+      border-radius: 14px;
+      box-shadow: none;
+      gap: 5px;
     }
 
-    .catalog-toolbar {
-      padding: 10px 14px;
-      margin-bottom: 16px;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
+    .query-notice-badge {
+      font-size: 0.74rem;
+      padding: 3px 10px;
+      border-radius: 12px;
+      width: 100%;
       justify-content: space-between;
     }
-    .catalog-view-switcher {
-      flex-shrink: 0;
+
+    /* Pestañas de locales en cuadrícula compacta 2-columnas */
+    .local-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px;
+      padding: 2px 0 0 0;
+      margin: 0;
+      width: 100%;
+      overflow-x: visible;
+    }
+    .tab-item {
+      padding: 5px 8px;
+      font-size: 0.75rem;
+      border-radius: 12px;
+      justify-content: center;
+      text-align: center;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      box-shadow: none;
+      border-width: 1px;
+    }
+    /* "Todos los Locales" y "Casino Central" abarcan ambas columnas para legibilidad óptima */
+    .local-tabs .tab-item:nth-child(1),
+    .local-tabs .tab-item:nth-child(2) {
+      grid-column: 1 / -1;
+    }
+    /* El último Food Truck (si es impar) abarca ambas columnas o queda centrado */
+    .local-tabs .tab-item:nth-child(5) {
+      grid-column: 1 / -1;
     }
 
+    /* BARRA DE HERRAMIENTAS Y VISTAS MINIMALISTA */
+    .catalog-toolbar {
+      padding: 6px 12px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+    }
+    .catalog-toolbar-left {
+      font-size: 0.82rem;
+    }
+    .catalog-view-switcher {
+      padding: 2px;
+      gap: 2px;
+      border-radius: 7px;
+    }
+    .btn-view-mode {
+      width: 28px;
+      height: 28px;
+      border-radius: 5px;
+    }
+    .btn-view-mode svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* PROMOCIONES FLASH MINIMALISTA EN MÓVIL */
+    .flash-deals-section {
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      border-radius: 12px;
+      border-width: 1.5px;
+    }
+    .flash-deals-header {
+      margin-bottom: 8px;
+    }
+    .flash-deals-title {
+      font-size: 0.95rem;
+      gap: 6px;
+    }
+    .flash-grid {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .flash-card {
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    /* ENCABEZADOS DE LOCAL EN MÓVIL */
     .local-header {
       align-items: center;
-      gap: 8px;
-      padding-bottom: 8px;
+      gap: 6px;
+      padding-bottom: 6px;
+      margin-bottom: 10px;
     }
     .local-name-title {
-      font-size: 1.15rem;
+      font-size: 1.05rem;
+    }
+    .local-type-tag {
+      font-size: 0.68rem;
+      padding: 1px 6px;
+    }
+    .local-status-badge .badge {
+      font-size: 0.68rem;
+      padding: 3px 6px;
     }
   }
 </style>
