@@ -721,6 +721,32 @@
     font-size: 1.15rem;
   }
 
+  /* ========================================================
+     ANIMACIÓN FLUIDA DE CONMUTACIÓN DE VISTA (CUADRÍCULA <-> LISTA)
+     ======================================================== */
+  @keyframes cardMorphIn {
+    0% {
+      opacity: 0.15;
+      transform: translateY(8px) scale(0.988);
+      filter: blur(0.8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  .view-animating .products-grid .card-producto {
+    animation: cardMorphIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .view-animating .products-grid .card-producto:nth-child(1) { animation-delay: 0ms; }
+  .view-animating .products-grid .card-producto:nth-child(2) { animation-delay: 20ms; }
+  .view-animating .products-grid .card-producto:nth-child(3) { animation-delay: 40ms; }
+  .view-animating .products-grid .card-producto:nth-child(4) { animation-delay: 60ms; }
+  .view-animating .products-grid .card-producto:nth-child(5) { animation-delay: 80ms; }
+  .view-animating .products-grid .card-producto:nth-child(6) { animation-delay: 100ms; }
+
   /* BOTÓN HAMBURGUESA / COLAPSABLE DEL BANNER (SOLO MÓVIL) */
   .hero-mobile-toggle-btn {
     display: none;
@@ -1396,13 +1422,17 @@
 <script>
   /**
    * Conmutador reactivo entre Vista Completa y Vista Simplificada (Móvil)
-   * Almacena la preferencia del estudiante en localStorage y actualiza la interfaz al instante (0ms).
+   * Almacena la preferencia del estudiante en localStorage y aplica transición suave en cascada.
    */
   function setCatalogView(mode) {
     var area = document.getElementById('catalogo-content-area');
     var btnCompleta = document.getElementById('btn-view-completa');
     var btnSimplificada = document.getElementById('btn-view-simplificada');
     if (!area) return;
+
+    var currentMode = area.classList.contains('view-simplificada') ? 'simplificada' : 'view-completa';
+    var isModeChange = (mode === 'simplificada' && !area.classList.contains('view-simplificada')) ||
+                       (mode === 'completa' && !area.classList.contains('view-completa'));
 
     if (mode === 'simplificada') {
       area.className = 'view-simplificada';
@@ -1414,6 +1444,16 @@
       if (btnCompleta) btnCompleta.classList.add('active');
       if (btnSimplificada) btnSimplificada.classList.remove('active');
       try { localStorage.setItem('inacap_catalogo_view', 'completa'); } catch(e) {}
+    }
+
+    // EFECTO VISUAL SUAVE: Cascada fluida al alternar de cuadrícula a lista y viceversa
+    if (isModeChange) {
+      area.classList.remove('view-animating');
+      void area.offsetWidth; // Forzar reflow para re-disparar animación
+      area.classList.add('view-animating');
+      setTimeout(function() {
+        area.classList.remove('view-animating');
+      }, 400);
     }
   }
 
