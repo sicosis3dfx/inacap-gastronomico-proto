@@ -1,10 +1,9 @@
-# Evaluación Sumativa 4 — Implementación, Pruebas y Calidad de Software (25%)
+# Sistema Centralizado de Publicación y Consulta Gastronómica — INACAP Sede Renca
 
-**Institución:** INACAP — Sede Renca 2026  
+**Institución:** Universidad Tecnológica de Chile INACAP — Sede Renca  
 **Asignatura:** TI3043 — Ingeniería de Software  
-**Docente:** Oscarina Sanabria  
-**Integrantes:** Yoshua Castillo · Martín Tapia · Vicente Sagredo · Angelo Zamora  
-**Proyecto:** Sistema Centralizado de Publicación y Consulta Gastronómica INACAP Renca  
+**Docente Guía:** Oscarina Sanabria  
+**Equipo de Desarrollo:** Yoshua Castillo · Martín Tapia · Vicente Sagredo · Angelo Zamora  
 **Repositorio GitHub:** [https://github.com/sicosis3dfx/inacap-gastronomico-proto/](https://github.com/sicosis3dfx/inacap-gastronomico-proto/)  
 **Despliegue en Producción:** [https://inacap-gastronomico-proto.vercel.app/](https://inacap-gastronomico-proto.vercel.app/)  
 **Panel Administrativo:** [https://inacap-gastronomico-proto.vercel.app/admin/](https://inacap-gastronomico-proto.vercel.app/admin/)  
@@ -31,13 +30,13 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-## 📌 1. Explicación de los Resultados Conseguidos (Rúbrica - Criterios 3.1.3, 3.1.4 y 3.1.5)
+## 📌 1. Arquitectura y Resultados Implementados del Proyecto
 
 Este proyecto implementa y despliega el **Sistema Centralizado de Publicación y Consulta Gastronómica de INACAP Sede Renca**. La solución resuelve la asimetría informativa, aglomeraciones y largas filas en el horario de almuerzo del campus, permitiendo a los estudiantes consultar en tiempo real la oferta de menús, opciones con beneficio estatal JUNAEB y alternativas veganas del Casino Central y los tres Food Trucks, mientras que los concesionarios pueden conmutar el stock de sus productos en un solo clic desde sus teléfonos inteligentes.
 
 ### 🎯 Resultados Clave Implementados:
 
-1. **Arquitectura Cloud y Base de Datos en Producción con Supabase (Criterio 3.1.3):**
+1. **Arquitectura Cloud y Base de Datos en Producción con Supabase:**
    - Implementación de modelo **DBaaS (Database-as-a-Service)** mediante **Supabase (PostgreSQL administrado)** con pgBouncer y cifrado en tránsito TLS 1.3 / en reposo AES-256 (*"Base de datos de producción - No SQLite"*).
    - Implementación de modelos relacionales en `gastronomia/models.py`:
      - `Local`: Establecimientos gastronómicos (Casino y Food Trucks) con métodos `abrir_jornada()` y `cerrar_jornada()`.
@@ -45,7 +44,7 @@ Este proyecto implementa y despliega el **Sistema Centralizado de Publicación y
      - `MenuDia`: Especialización mediante herencia directa de `Producto` con desglose de entrada, fondo, postre, bandera de opción vegana y método `get_detalle_completo()`.
      - `PromoFlash`: Ofertas temporales con fecha de expiración y propiedad `@property esta_vigente`.
 
-2. **Personalización y Branding Institucional INACAP (Indicador 3.1.3):**
+2. **Personalización y Branding Institucional INACAP:**
    - **Identidad Oficial:** Integración del logotipo oficial de INACAP en el navbar principal y en la cabecera del Django Admin.
    - **Soporte Tema Claro / Oscuro:** Selector dinámico con emojis representativos (☀️ Modo Claro / 🌙 Modo Oscuro) y persistencia en `localStorage`.
    - **Corrección de Codificación UTF-8:** Normalización completa de caracteres y tildes en toda la interfaz sin caracteres residuales (*Mojibake*).
@@ -72,7 +71,7 @@ Este proyecto implementa y despliega el **Sistema Centralizado de Publicación y
      - Se integran automáticamente a la marquesina superior de *Promociones Flash por Tiempo Limitado* con su hora límite de expiración.
    - **Métricas en Vivo del Turno:** Chip dinámico en el panel del operador que monitoriza el total de ofertas flash vigentes en tiempo real.
 
-6. **Seguridad Robusta bajo OWASP Top 10 y Ley Chilena N° 21.459 (Criterios 3.1.3 y 3.1.5):**
+6. **Seguridad Robusta bajo OWASP Top 10 y Ley Chilena N° 21.459:**
    - **OWASP A01 (Broken Access Control) & Art. 2° Ley 21.459:** Aislamiento estricto de datos en el ORM `Producto.objects.filter(local__operador=request.user)`. Si un usuario intenta modificar o conmutar stock de un local ajeno (ataque IDOR/BOLA), el backend lo bloquea retornando **HTTP 403 Forbidden**.
    - **Estandarización RBAC con Grupos Institucionales:** Implementación del rol `Encargados de Locales Permisos Aislados`, centralizando los permisos mínimos necesarios (`add/change/view` sobre productos, menús y promociones flash) mientras que la lógica de `get_queryset()` y `formfield_for_foreignkey()` en `admin.py` y `views.py` confina el acceso únicamente a los registros del local asignado.
    - **OWASP A02 (Cryptographic Failures):** Aislamiento estricto de secretos (`SECRET_KEY`, `DATABASE_URL`) en variables de entorno `.env` (excluidas del control de versiones). Contraseñas de operadores cifradas mediante PBKDF2/SHA-256 en Django Auth y tráfico 100% bajo HTTPS/TLS 1.3.
@@ -141,7 +140,7 @@ python manage.py test --settings=mi_proyecto.test_settings -v 2
    - Ciclo de apertura y cierre de jornada operativa en `Local` (`abrir_jornada()`, `cerrar_jornada()`).
    - Conmutación booleana inmediata de stock en `Producto` (`cambiar_estado_stock()`).
    - Concatenación estructurada de platos en `MenuDia` (`get_detalle_completo()`).
-   - Evaluación dinámica de vigencia temporal en `PromoFlash` (`esta_vigente`, cálculo con fechas futuras y expiradas).
+   - Verificación dinámica de vigencia temporal en `PromoFlash` (`esta_vigente`, cálculo con fechas futuras y expiradas).
 
 2. **Pruebas Funcionales y Vistas Públicas (RF02, RF04, RF06):**
    - Acceso anónimo al catálogo público sin requerir inicio de sesión (HTTP 200).

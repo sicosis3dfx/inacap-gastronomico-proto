@@ -1,7 +1,7 @@
 # 🛡️ GUÍA RÁPIDA DE DEMOSTRACIÓN EN VIVO: ERRORES HTTP 4XX
-## Defensa Oral — Evaluación Sumativa N° 4: Calidad, Testing y Seguridad (TI3043)
+## Presentación Técnica — Calidad, Testing y Ciberseguridad (TI3043)
 
-Esta guía contiene los **comandos listos para copiar y pegar** durante la presentación en vivo ante la profesora Oscarina Sanabria, permitiendo provocar y evidenciar en tiempo real el manejo defensivo de errores **HTTP 4xx** en el prototipo productivo.
+Esta guía contiene los **comandos listos para copiar y pegar** durante la presentación en vivo ante la Comisión Evaluadora, permitiendo provocar y evidenciar en tiempo real el manejo defensivo de errores **HTTP 4xx** en el prototipo productivo.
 
 ---
 

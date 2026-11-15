@@ -1,5 +1,5 @@
 """
-Script interactivo para ejecutar la batería de pruebas de la Evaluación 4.
+Script interactivo para ejecutar la batería de pruebas de calidad y seguridad.
 Uso directo en terminal:
     python ejecutar_pruebas.py
 """
@@ -17,7 +17,7 @@ if __name__ == '__main__':
     from django.core.management import call_command
     
     print("\n" + "=" * 76)
-    print(" SISTEMA GASTRONOMICO INACAP RENCA — SUITE DE TESTING EVALUACION 4")
+    print(" SISTEMA GASTRONOMICO INACAP RENCA — SUITE INTEGRAL DE PRUEBAS")
     print(" Verificando: Funcionalidad, OWASP Top 10, RBAC y Latencia ISO 25010 (<200ms)")
     print("=" * 76 + "\n")
     

@@ -8,7 +8,7 @@ Batería de pruebas unitarias y de integración para validar:
   - RF02 / RF06: Catálogo público estudiantil responsivo.
   - RF03 / HU04: Conmutación de stock en 1 clic (< 2 seg) vía endpoint asíncrono.
   - RF04: Filtrado booleano JUNAEB.
-  - RF05: Evaluación de vigencia de Promociones Flash.
+  - RF05: Verificación de vigencia de Promociones Flash.
   - OWASP A03: Saneamiento de datos e inyección de código en formularios.
 """
 
