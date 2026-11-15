@@ -309,3 +309,24 @@ class PromoFlash(models.Model):
         if not self.expira_en:
             return False
         return timezone.now() < self.expira_en
+
+    @property
+    def porcentaje_descuento(self) -> int:
+        """
+        Calcula el porcentaje de ahorro de la promoción respecto al precio regular.
+        (Modelado formalmente en Diagrama de Clases UML 2.5).
+        """
+        if self.producto and self.producto.precio_regular > 0:
+            ahorro = self.producto.precio_regular - self.precio_oferta
+            if ahorro > 0:
+                return round((ahorro / self.producto.precio_regular) * 100)
+        return 0
+
+    @property
+    def monto_ahorro(self) -> int:
+        """
+        Retorna el monto exacto ahorrado en pesos chilenos ($).
+        """
+        if self.producto and self.producto.precio_regular > self.precio_oferta:
+            return self.producto.precio_regular - self.precio_oferta
+        return 0
