@@ -517,6 +517,218 @@
     border: 1px dashed var(--border);
   }
 
+  /* ========================================================
+     BARRA DE VISTA: COMPLETA VS SIMPLIFICADA (MÓVIL)
+     ======================================================== */
+  .catalog-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px 16px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .catalog-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--inacap-navy-dark);
+  }
+
+  .catalog-view-switcher {
+    display: inline-flex;
+    align-items: center;
+    background: #f1f5f9;
+    padding: 3px;
+    border-radius: 25px;
+    border: 1px solid var(--border);
+    gap: 4px;
+  }
+
+  .view-switcher-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    padding: 0 6px 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-view-mode {
+    border: none;
+    background: transparent;
+    padding: 7px 15px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-view-mode:hover {
+    color: var(--text-main);
+    transform: scale(1.02);
+  }
+  .btn-view-mode:active {
+    transform: scale(0.96);
+  }
+
+  .btn-view-mode.active {
+    background: #ffffff;
+    color: var(--inacap-navy-dark);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(0, 75, 135, 0.18);
+  }
+
+  .btn-view-mode.active:hover {
+    background: #ecfdf5;
+    color: #065f46;
+    border-color: #34d399;
+    box-shadow: 0 3px 12px rgba(16, 185, 129, 0.25);
+  }
+
+  /* ========================================================
+     MODO VISTA SIMPLIFICADA (COMPACTA / LISTA RÁPIDA)
+     ======================================================== */
+  .card-badges-inline {
+    display: none;
+  }
+
+  .view-simplificada .products-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  @media (min-width: 860px) {
+    .view-simplificada .products-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+  }
+
+  .view-simplificada .card-producto {
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 14px;
+    gap: 12px;
+    min-height: 84px;
+    border-radius: var(--radius-sm);
+  }
+
+  .view-simplificada .card-producto:hover {
+    transform: translateY(-2px);
+  }
+
+  .view-simplificada .producto-img-container {
+    height: 72px;
+    width: 72px;
+    min-width: 72px;
+    border-radius: var(--radius-sm);
+    border-bottom: none;
+    background: #f1f5f9;
+    flex-shrink: 0;
+    padding: 2px;
+  }
+
+  .view-simplificada .producto-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    padding: 0;
+    border-radius: 6px;
+    filter: none;
+  }
+
+  .view-simplificada .img-placeholder {
+    font-size: 1.8rem;
+    border-radius: 6px;
+  }
+
+  .view-simplificada .vegano-top-banner {
+    display: none !important;
+  }
+
+  .view-simplificada .floating-badges {
+    display: none !important;
+  }
+
+  .view-simplificada .card-badges-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 3px;
+  }
+
+  .view-simplificada .card-badges-inline .badge {
+    font-size: 0.68rem;
+    padding: 2px 6px;
+  }
+
+  .view-simplificada .card-body {
+    padding: 0;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .view-simplificada .producto-nombre {
+    font-size: 0.96rem;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .view-simplificada .producto-categoria {
+    font-size: 0.72rem;
+    margin-bottom: 2px;
+  }
+
+  .view-simplificada .menu-breakdown {
+    padding: 4px 8px;
+    margin: 3px 0 4px 0;
+    font-size: 0.76rem;
+    border-left-width: 2.5px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .view-simplificada .menu-item-row {
+    display: inline-flex;
+    gap: 3px;
+  }
+  .view-simplificada .menu-item-label {
+    min-width: auto;
+  }
+
+  .view-simplificada .card-footer-price {
+    margin-top: 2px;
+    padding-top: 0;
+    border-top: none;
+    align-items: center;
+  }
+
+  .view-simplificada .precio-tag {
+    font-size: 1.15rem;
+  }
+
+  /* ========================================================
+     RESPONSIVE BREAKPOINTS (AJUSTE MÓVIL Y RESOLUCIÓN DE BOTONES)
+     ======================================================== */
   @media (max-width: 820px) {
     .hero-top-row { flex-direction: column; align-items: stretch; gap: 14px; }
     .hero-search-row { width: 100%; }
@@ -524,7 +736,42 @@
     .hero-unified { padding: 18px 16px 14px 16px; }
     .hero-search-btn { justify-content: center; }
     .hero-controls-shelf { flex-direction: column; align-items: stretch; gap: 10px; }
-    .btn-junaeb-toggle { justify-content: center; }
+    .btn-junaeb-toggle { justify-content: center; width: 100%; }
+
+    /* CORRECCIÓN BOTÓN CORTADO: Envoltorio natural y flexible en móviles */
+    .local-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      overflow-x: visible;
+      gap: 8px;
+      padding: 4px 0 2px 0;
+      margin: 0;
+      width: 100%;
+    }
+    .tab-item {
+      padding: 7px 12px;
+      font-size: 0.82rem;
+      flex: 1 1 auto;
+      justify-content: center;
+      text-align: center;
+      min-width: 110px;
+    }
+
+    .catalog-toolbar {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      padding: 10px 12px;
+    }
+    .catalog-view-switcher {
+      width: 100%;
+      justify-content: space-between;
+    }
+    .btn-view-mode {
+      flex: 1;
+      justify-content: center;
+    }
+
     .local-header {
       align-items: center;
       gap: 8px;
@@ -595,6 +842,37 @@
       </div>
     </div>
   </section>
+
+  <!-- BARRA SELECTORA DE VISTA: COMPLETA VS SIMPLIFICADA MÓVIL -->
+  <div class="catalog-toolbar">
+    <div class="catalog-toolbar-left">
+      <span>🍽️ <strong>Oferta y Disponibilidad</strong></span>
+    </div>
+    <div class="catalog-view-switcher" role="group" aria-label="Cambiar modo de visualización">
+      <span class="view-switcher-label">Modo:</span>
+      <button type="button" class="btn-view-mode active" id="btn-view-completa" onclick="setCatalogView('completa')" title="Vista tradicional con tarjetas y fotografías ampliadas">
+        <span>🖼️</span> <span>Completa</span>
+      </button>
+      <button type="button" class="btn-view-mode" id="btn-view-simplificada" onclick="setCatalogView('simplificada')" title="Vista simplificada compacta ideal para celulares">
+        <span>📱</span> <span>Simplificada</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTENEDOR PRINCIPAL DEL CATÁLOGO CON CONMUTACIÓN DINÁMICA DE VISTA -->
+  <div id="catalogo-content-area" class="view-completa">
+    <script>
+      /* Inicialización inmediata antes de renderizado para evitar parpadeos */
+      (function() {
+        try {
+          var saved = localStorage.getItem('inacap_catalogo_view');
+          var isMobile = window.innerWidth <= 640;
+          var activeMode = saved ? saved : (isMobile ? 'simplificada' : 'completa');
+          var el = document.getElementById('catalogo-content-area');
+          if (el) el.className = (activeMode === 'simplificada') ? 'view-simplificada' : 'view-completa';
+        } catch(e) {}
+      })();
+    </script>
 
   <!-- PROMOCIONES FLASH ACTIVAS (RF05) -->
   {% if promos_flash %}
@@ -689,6 +967,18 @@
                       <h4 class="producto-nombre">{{ item.nombre }}</h4>
                       <span class="producto-categoria">Menú Diario Vegano</span>
 
+                      <!-- Badges inline para Vista Simplificada -->
+                      <div class="card-badges-inline">
+                        <span class="badge badge-vegano">🌱 VEGANO</span>
+                        {% if item.promo_flash %}<span class="badge badge-flash">⚡ PROMO FLASH</span>{% endif %}
+                        {% if not item.disponible %}
+                          <span class="badge badge-agotado">⛔ AGOTADO</span>
+                        {% else %}
+                          <span class="badge badge-disponible">✅ Disponible</span>
+                        {% endif %}
+                        {% if item.acepta_junaeb %}<span class="badge badge-junaeb">💳 JUNAEB</span>{% endif %}
+                      </div>
+
                       <!-- Detalle del Menú: Entrada, Fondo, Postre -->
                       {% if item.menu_info %}
                         <div class="menu-breakdown vegano-border">
@@ -753,6 +1043,17 @@
                     {% if item.es_menu_dia %}Menú Diario Tradicional{% else %}{{ item.categoria|default:"Gastronomía" }}{% endif %}
                   </span>
 
+                  <!-- Badges inline para Vista Simplificada -->
+                  <div class="card-badges-inline">
+                    {% if item.promo_flash %}<span class="badge badge-flash">⚡ PROMO FLASH</span>{% endif %}
+                    {% if not item.disponible %}
+                      <span class="badge badge-agotado">⛔ AGOTADO</span>
+                    {% else %}
+                      <span class="badge badge-disponible">✅ Disponible</span>
+                    {% endif %}
+                    {% if item.acepta_junaeb %}<span class="badge badge-junaeb">💳 JUNAEB</span>{% endif %}
+                  </div>
+
                   <!-- Desglose de Menú Tradicional si aplica -->
                   {% if item.menu_info %}
                     <div class="menu-breakdown">
@@ -802,5 +1103,43 @@
       <a href="{% url 'catalogo_publico' %}" class="nav-btn nav-btn-primary">Ver Catálogo Completo</a>
     </div>
   {% endif %}
+  </div><!-- /#catalogo-content-area -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  /**
+   * Conmutador reactivo entre Vista Completa y Vista Simplificada (Móvil)
+   * Almacena la preferencia del estudiante en localStorage y actualiza la interfaz al instante.
+   */
+  function setCatalogView(mode) {
+    var area = document.getElementById('catalogo-content-area');
+    var btnCompleta = document.getElementById('btn-view-completa');
+    var btnSimplificada = document.getElementById('btn-view-simplificada');
+    if (!area) return;
+
+    if (mode === 'simplificada') {
+      area.className = 'view-simplificada';
+      if (btnSimplificada) btnSimplificada.classList.add('active');
+      if (btnCompleta) btnCompleta.classList.remove('active');
+      try { localStorage.setItem('inacap_catalogo_view', 'simplificada'); } catch(e) {}
+    } else {
+      area.className = 'view-completa';
+      if (btnCompleta) btnCompleta.classList.add('active');
+      if (btnSimplificada) btnSimplificada.classList.remove('active');
+      try { localStorage.setItem('inacap_catalogo_view', 'completa'); } catch(e) {}
+    }
+  }
+
+  // Sincronizar botones de la barra de vistas tras carga completa
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      var saved = localStorage.getItem('inacap_catalogo_view');
+      var isMobile = window.innerWidth <= 640;
+      var activeMode = saved ? saved : (isMobile ? 'simplificada' : 'completa');
+      setCatalogView(activeMode);
+    } catch(e) {}
+  });
+</script>
 {% endblock %}
 
