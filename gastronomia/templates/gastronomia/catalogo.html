@@ -99,7 +99,6 @@
   }
   .hero-search-btn:hover {
     background: #0f172a;
-    transform: scale(1.04);
     box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35), 0 0 0 2px #34d399;
   }
   .hero-search-btn:active {
@@ -143,15 +142,16 @@
     color: #166534;
     border: 1.5px solid #86efac;
   }
-  .btn-junaeb-toggle:not(.active):hover {
-    background: #dcfce7;
-    border-color: #22c55e;
-    color: #14532d;
-    transform: scale(1.04);
-    box-shadow: 0 4px 14px rgba(34, 197, 94, 0.25), 0 0 0 2px #4ade80;
+  @media (hover: hover) {
+    .btn-junaeb-toggle:not(.active):hover {
+      background: #dcfce7;
+      border-color: #22c55e;
+      color: #14532d;
+      box-shadow: 0 4px 14px rgba(34, 197, 94, 0.25), 0 0 0 2px #4ade80;
+    }
   }
   .btn-junaeb-toggle:active {
-    transform: scale(0.96);
+    transform: scale(0.96) !important;
   }
   .btn-junaeb-toggle.active {
     background: #15803d;
@@ -159,10 +159,11 @@
     border: 1.5px solid #22c55e;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
   }
-  .btn-junaeb-toggle.active:hover {
-    background: #166534;
-    transform: scale(1.04);
-    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35), 0 0 0 2px #34d399;
+  @media (hover: hover) {
+    .btn-junaeb-toggle.active:hover {
+      background: #166534;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35), 0 0 0 2px #34d399;
+    }
   }
 
   /* PESTAÑAS SELECTORAS DE LOCALES (PASTEL / PERLA SUAVE) */
@@ -203,15 +204,14 @@
     gap: 6px;
   }
   .tab-item:active {
-    transform: scale(0.96);
+    transform: scale(0.96) !important;
   }
   @media (hover: hover) {
     .tab-item:hover {
       background: #ecfdf5;
       color: #065f46;
       border-color: #34d399;
-      transform: scale(1.03);
-      box-shadow: 0 5px 16px rgba(16, 185, 129, 0.28), 0 0 0 2px #6ee7b7;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
     }
   }
   .tab-item.active {
@@ -224,8 +224,7 @@
     .tab-item.active:hover {
       background: #064e3b;
       border-color: #10b981;
-      transform: scale(1.03);
-      box-shadow: 0 5px 18px rgba(16, 185, 129, 0.4), 0 0 0 2px #34d399;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
     }
   }
 
@@ -577,10 +576,9 @@
   .btn-view-mode:hover {
     color: #94a3b8;
     background: rgba(255, 255, 255, 0.06);
-    transform: scale(1.05);
   }
   .btn-view-mode:active {
-    transform: scale(0.95);
+    transform: scale(0.95) !important;
   }
 
   /* BOTÓN ACTIVO: AZUL BRILLANTE CON ICONO BLANCO */
@@ -592,7 +590,6 @@
   .btn-view-mode.active:hover {
     background: #1d4ed8;
     color: #ffffff;
-    transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.55);
   }
 
@@ -809,6 +806,9 @@
     .hero-mobile-toggle-btn:hover {
       background: rgba(255, 255, 255, 0.26);
       border-color: rgba(255, 255, 255, 0.5);
+    }
+    .hero-mobile-toggle-btn:active {
+      transform: scale(0.95) !important;
     }
     .hero-mobile-toggle-btn.is-active {
       background: #ffffff;
@@ -1529,21 +1529,51 @@
   }
 
   function bindInteractiveControls() {
-    // 1. Botón JUNAEB (alternar activar/desactivar en 1 clic)
+    // 1. Botón JUNAEB (Feedback Optimista Instantáneo en 0 ms)
     var btnJunaeb = document.getElementById('btnJunaebToggle');
     if (btnJunaeb) {
       btnJunaeb.onclick = function(e) {
         e.preventDefault();
-        fetchCatalog(btnJunaeb.getAttribute('href'));
+        var targetUrl = btnJunaeb.getAttribute('href');
+        var wasActive = btnJunaeb.classList.contains('active');
+
+        // OPTIMISMO 0ms: Conmuta estado visual al instante sin esperar la red
+        if (wasActive) {
+          btnJunaeb.classList.remove('active');
+          btnJunaeb.innerHTML = '<span>💳 Solo Acepta JUNAEB</span>';
+          btnJunaeb.title = 'Filtrar solo productos que aceptan JUNAEB';
+        } else {
+          btnJunaeb.classList.add('active');
+          btnJunaeb.innerHTML = '<span>💳 Beneficio JUNAEB Activado</span>';
+          btnJunaeb.title = 'Presiona para desactivar el filtro JUNAEB';
+        }
+
+        fetchCatalog(targetUrl);
       };
     }
 
-    // 2. Pestañas de Locales (seleccionar y deseleccionar para volver a todos)
+    // 2. Pestañas de Locales (Feedback Optimista Instantáneo en 0 ms)
     var localTabs = document.querySelectorAll('.local-tabs .tab-item');
     localTabs.forEach(function(tab) {
       tab.onclick = function(e) {
         e.preventDefault();
-        fetchCatalog(tab.getAttribute('href'));
+        var targetUrl = tab.getAttribute('href');
+        var wasActive = tab.classList.contains('active');
+        var isTodos = !tab.dataset.localId;
+
+        // OPTIMISMO 0ms: Deselecciona los demás y activa el seleccionado inmediatamente
+        localTabs.forEach(function(t) { t.classList.remove('active'); });
+
+        if (wasActive && !isTodos) {
+          // Si el local específico ya estaba seleccionado, al volver a presionar
+          // se desactiva inmediatamente y se ilumina "Todos los Locales"
+          var todosTab = document.querySelector('.local-tabs .tab-item[data-local-id=""]');
+          if (todosTab) todosTab.classList.add('active');
+        } else {
+          tab.classList.add('active');
+        }
+
+        fetchCatalog(targetUrl);
       };
     });
 
@@ -1554,6 +1584,8 @@
         e.preventDefault();
         var currentInput = document.getElementById('heroSearchInput');
         if (currentInput) currentInput.value = '';
+        var noticeBadge = document.querySelector('.query-notice-badge');
+        if (noticeBadge) noticeBadge.style.display = 'none';
         fetchCatalog(btn.getAttribute('href'));
       };
     });
