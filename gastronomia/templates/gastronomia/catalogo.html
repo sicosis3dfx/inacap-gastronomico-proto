@@ -84,8 +84,16 @@
     display: flex;
     gap: 8px;
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding-bottom: 6px;
     max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE / Edge */
+  }
+  .local-tabs::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+    width: 0;
+    height: 0;
   }
   .tab-item {
     white-space: nowrap;
@@ -167,18 +175,43 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
     margin-bottom: 16px;
     border-bottom: 2px solid var(--border);
-    padding-bottom: 8px;
+    padding-bottom: 10px;
+  }
+  .local-info-col {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
   }
   .local-name-title {
     font-family: var(--font-heading);
-    font-size: 1.35rem;
+    font-size: 1.3rem;
     font-weight: 800;
     color: var(--inacap-navy-dark);
-    display: flex;
+    margin: 0;
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+  }
+  .local-type-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--surface-subtle);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 8px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .local-status-badge {
+    flex-shrink: 0;
   }
 
   /* GRILLA DE TARJETAS (MOBILE-FIRST) */
@@ -365,6 +398,14 @@
     .hero-title { font-size: 1.45rem; }
     .filters-bar { flex-direction: column; align-items: stretch; }
     .btn-junaeb-toggle { justify-content: center; }
+    .local-header {
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+    }
+    .local-name-title {
+      font-size: 1.15rem;
+    }
   }
 </style>
 {% endblock %}
@@ -464,12 +505,14 @@
       <section class="local-section" id="local-{{ grupo.local.id_local }}">
         <!-- Encabezado de Local -->
         <div class="local-header">
-          <h2 class="local-name-title">
-            {% if grupo.local.tipo == 'Casino' %}🍽️{% else %}🚚{% endif %}
-            {{ grupo.local.nombre }}
-            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">({{ grupo.local.tipo }})</span>
-          </h2>
-          <div>
+          <div class="local-info-col">
+            <h2 class="local-name-title">
+              {% if grupo.local.tipo == 'Casino' %}🍽️{% else %}🚚{% endif %}
+              {{ grupo.local.nombre }}
+            </h2>
+            <span class="local-type-tag">{{ grupo.local.tipo }}</span>
+          </div>
+          <div class="local-status-badge">
             <span class="badge badge-disponible">🟢 Abierto</span>
           </div>
         </div>
