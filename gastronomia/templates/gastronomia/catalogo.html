@@ -963,7 +963,17 @@
       <span>🍽️ <strong>Oferta y Disponibilidad</strong></span>
     </div>
     <div class="catalog-view-switcher" role="group" aria-label="Cambiar modo de visualización">
-      <!-- Botón Modo Lista / Simplificada (Izquierda) -->
+      <!-- Botón Modo Cuadrícula / Completa (Izquierda) -->
+      <button type="button" class="btn-view-mode active" id="btn-view-completa" onclick="setCatalogView('completa')" title="Vista en Cuadrícula Completa con Fotografías" aria-label="Vista en cuadrícula completa">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+          <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+          <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+        </svg>
+      </button>
+
+      <!-- Botón Modo Lista / Simplificada (Derecha) -->
       <button type="button" class="btn-view-mode" id="btn-view-simplificada" onclick="setCatalogView('simplificada')" title="Vista en Lista Simplificada (Móvil)" aria-label="Vista en lista simplificada">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="8.5" y1="6" x2="21" y2="6"></line>
@@ -974,28 +984,21 @@
           <circle cx="3.5" cy="18" r="1.5" fill="currentColor"></circle>
         </svg>
       </button>
-
-      <!-- Botón Modo Cuadrícula / Completa (Derecha) -->
-      <button type="button" class="btn-view-mode active" id="btn-view-completa" onclick="setCatalogView('completa')" title="Vista en Cuadrícula Completa con Fotografías" aria-label="Vista en cuadrícula completa">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-          <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-          <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-          <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
-        </svg>
-      </button>
     </div>
   </div>
 
   <!-- CONTENEDOR PRINCIPAL DEL CATÁLOGO CON CONMUTACIÓN DINÁMICA DE VISTA -->
   <div id="catalogo-content-area" class="view-completa">
     <script>
-      /* Inicialización inmediata antes de renderizado para evitar parpadeos */
+      /* Inicialización inmediata: Vista en Cuadrícula Completa por defecto */
       (function() {
         try {
+          if (!localStorage.getItem('inacap_catalog_v2_initialized')) {
+            localStorage.setItem('inacap_catalogo_view', 'completa');
+            localStorage.setItem('inacap_catalog_v2_initialized', 'true');
+          }
           var saved = localStorage.getItem('inacap_catalogo_view');
-          var isMobile = window.innerWidth <= 640;
-          var activeMode = saved ? saved : (isMobile ? 'simplificada' : 'completa');
+          var activeMode = (saved === 'simplificada') ? 'simplificada' : 'completa';
           var el = document.getElementById('catalogo-content-area');
           if (el) el.className = (activeMode === 'simplificada') ? 'view-simplificada' : 'view-completa';
         } catch(e) {}
@@ -1277,12 +1280,11 @@
     });
   })();
 
-  // Sincronizar botones de la barra de vistas tras carga completa
+  // Sincronizar botones de la barra de vistas tras carga completa (Cuadrícula Completa por defecto)
   document.addEventListener('DOMContentLoaded', function() {
     try {
       var saved = localStorage.getItem('inacap_catalogo_view');
-      var isMobile = window.innerWidth <= 640;
-      var activeMode = saved ? saved : (isMobile ? 'simplificada' : 'completa');
+      var activeMode = (saved === 'simplificada') ? 'simplificada' : 'completa';
       setCatalogView(activeMode);
     } catch(e) {}
   });
