@@ -42,33 +42,35 @@ Este proyecto implementa y despliega el **Sistema Centralizado de Publicación y
      - `Local`: Establecimientos gastronómicos (Casino y Food Trucks) con métodos `abrir_jornada()` y `cerrar_jornada()`.
      - `Producto`: Catálogo de ítems con método estrella `cambiar_estado_stock()`.
      - `MenuDia`: Especialización mediante herencia directa de `Producto` con desglose de entrada, fondo, postre, bandera de opción vegana y método `get_detalle_completo()`.
-     - `PromoFlash`: Ofertas temporales con fecha de expiración y propiedad `@property esta_vigente`.
+     - `PromoFlash`: Ofertas temporales con fecha de expiración, propiedad `@property esta_vigente`, `@property porcentaje_descuento` y `@property monto_ahorro` (100% alineado al Diagrama de Clases UML 2.5).
 
 2. **Personalización y Branding Institucional INACAP:**
    - **Identidad Oficial:** Integración del logotipo oficial de INACAP en el navbar principal y en la cabecera del Django Admin.
-   - **Soporte Tema Claro / Oscuro:** Selector dinámico con emojis representativos (☀️ Modo Claro / 🌙 Modo Oscuro) y persistencia en `localStorage`.
+   - **Diseño Institucional Limpio y Profesional:** Paleta cromática oficial de INACAP (Rojo Institucional `#b91c1c`, Azul Marino `#0f172a`, Verde JUNAEB `#1b5e20` y Naranja Flash `#d84315`), con tipografía moderna `Plus Jakarta Sans` y contrastes certificados para accesibilidad WCAG.
    - **Corrección de Codificación UTF-8:** Normalización completa de caracteres y tildes en toda la interfaz sin caracteres residuales (*Mojibake*).
    - **Visualización Proporcional E-commerce:** Contenedores de producto adaptativos con sombra de profundidad 3D (`drop-shadow`) y ajuste visual (`object-fit: contain`) optimizado para latas de bebida (350ml), combos y platos sin recortes ni zoom exagerado.
 
-3. **Catálogo Público Responsivo Mobile-First (RF02 / RF06):**
-   - Interfaz pública responsiva adaptada a dispositivos móviles para la consulta rápida de los estudiantes.
-   - **Filtro Dinámico JUNAEB (RF04):** Mecanismo transparente mediante parámetro URL `?junaeb=1` y botón toggle interactivo para estudiantes beneficiarios de la Beca BAES.
+3. **Catálogo Público Responsivo Mobile-First con Filtrado Asíncrono (RF02 / RF06):**
+   - **Filtrado Dinámico Asíncrono (SPA-like con Fetch API):** Búsqueda por texto en tiempo real con debounce, filtro por local y botón conmutable JUNAEB sin recargar la página completa, sincronizando la URL mediante `history.replaceState`.
+   - **Conmutador de Vistas Dual (Cuadrícula Completa / Lista Simplificada):** Permite a los estudiantes alternar con 1 clic entre una vista rica en imágenes (por defecto) y una vista condensada de alta velocidad para consulta rápida en horas punta, con transición suave y persistencia en `localStorage`.
+   - **Botón Flotante Inteligente "Volver Arriba":** Acceso rápido al inicio del catálogo activado dinámicamente mediante sensor de scroll con transiciones suaves.
+   - **Filtro Dinámico JUNAEB (RF04):** Mecanismo transparente mediante parámetro URL `?junaeb=1` y botón toggle interactivo (activar/desactivar en un toque) para estudiantes beneficiarios de la Beca BAES.
    - **Inclusión Dietaria (Casino Central):** Destacado visual prioritario para el menú vegano del día (`🌱 100% Vegano`) frente a las opciones tradicionales.
-   - **Insignias de Estado en Tiempo Real:** Badges visuales inmediatos para productos `✅ Disponible`, `⛔ AGOTADO` (RF03) y el nuevo distintivo interactivo animado **`⚡ PROMO FLASH`** (RF05) con despliegue de precio de oferta y precio anterior tachado.
+   - **Insignias de Estado en Tiempo Real:** Badges visuales inmediatos para productos `✅ Disponible`, `⛔ AGOTADO` (RF03) e insignia animada `⚡ PROMO FLASH` (RF05).
 
 4. **Funcionalidad Estrella: Switch Asíncrono de Stock en 1 Clic (RF03 / HU04):**
    - **Panel Privado del Operador (`/panel/`):** Vista protegida bajo autenticación y asignación de local del usuario en sesión (`@login_required`).
-   - **Conmutación en 1 Clic:** Interruptor táctil interactivo programado con JavaScript `fetch()` hacia el endpoint `POST /api/producto/<pk>/stock/`.
+   - **Conmutación en 1 Clic Mobile-First:** Interruptor táctil ergonómico con etiquetas visuales proporcionales (`DISPONIBLE` / `AGOTADO`), programado con JavaScript `fetch()` hacia el endpoint `POST /api/producto/<pk>/stock/`.
    - **Rendimiento Ultrarrápido:** Mutación de disponibilidad persistida en Supabase y reflejada en menos de **200 milisegundos** sin recargar la página (cumpliendo con creces el RNF02 < 2 segundos).
 
-5. **Módulo de Gestión de Promociones Flash en Tiempo Real (RF05):**
+5. **Módulo de Gestión de Promociones Flash de Alto Impacto (RF05):**
    - **Autonomía Operativa Descentralizada:** Cada encargado de local puede formular, editar y activar ofertas relámpago directamente desde su panel operativo (`/panel/`), eliminando la dependencia previa de la administración central.
    - **Configuración de Precios y Temporizador Programado:** Permite ajustar el precio regular, fijar el precio de oferta con descuento y definir la duración de vigencia (30 min, 1 hr, 2 hrs, 3 hrs o jornada completa).
    - **Endpoint Asíncrono Seguro (`POST /api/producto/<pk>/promo-flash/`):** Activación y desactivación en 1 clic mediante llamadas asíncronas con la API `fetch()`, calculando automáticamente la estampa temporal de expiración (`expira_en`) con retroalimentación Toast inmediata.
-   - **Destacado Visual Multicapa:** Los productos en oferta activa se sincronizan de inmediato en el catálogo público:
-     - Lucen el distintivo animado `⚡ PROMO FLASH` con efecto de pulso luminoso en la tarjeta.
-     - Destacan con un borde perimetral naranja (`is-promo-flash`) y muestran el precio original tachado junto al precio de oferta.
-     - Se integran automáticamente a la marquesina superior de *Promociones Flash por Tiempo Limitado* con su hora límite de expiración.
+   - **Showcase de Precios de Alto Impacto:**
+     - Tarjeta destacada con cápsula comparativa de precios: Precio Normal tachado con etiqueta de referencia, flecha de flujo promocional (`➔`), y Precio de Oferta en tipografía de alto impacto (`2.1rem`, Font-weight 900) con etiqueta `🔥 Oferta Flash`.
+     - Insignia dinámica de descuento porcentual (`-XX% DTO`) y píldora de ahorro exacto (`Ahorras $X.XXX`), modeladas formalmente como `@property porcentaje_descuento` y `@property monto_ahorro` en la clase `PromoFlash`.
+     - Marquesina superior responsiva con temporizador en vivo de expiración.
    - **Métricas en Vivo del Turno:** Chip dinámico en el panel del operador que monitoriza el total de ofertas flash vigentes en tiempo real.
 
 6. **Seguridad Robusta bajo OWASP Top 10 y Ley Chilena N° 21.459:**
