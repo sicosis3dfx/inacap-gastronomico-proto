@@ -518,7 +518,7 @@
   }
 
   /* ========================================================
-     BARRA DE VISTA: COMPLETA VS SIMPLIFICADA (MÓVIL)
+     BARRA DE VISTA: SELECTOR SEGMENTADO (LISTA VS CUADRÍCULA)
      ======================================================== */
   .catalog-toolbar {
     display: flex;
@@ -542,60 +542,54 @@
     color: var(--inacap-navy-dark);
   }
 
+  /* CONTENEDOR SEGMENTADO DARK (IDÉNTICO A LA REFERENCIA) */
   .catalog-view-switcher {
     display: inline-flex;
     align-items: center;
-    background: #f1f5f9;
+    background: #182030;
     padding: 3px;
-    border-radius: 25px;
-    border: 1px solid var(--border);
-    gap: 4px;
-  }
-
-  .view-switcher-label {
-    font-size: 0.75rem;
-    font-weight: 800;
-    color: var(--text-muted);
-    padding: 0 6px 0 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    border-radius: 12px;
+    border: 1px solid #283548;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    gap: 3px;
+    flex-shrink: 0;
   }
 
   .btn-view-mode {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
     border: none;
     background: transparent;
-    padding: 7px 15px;
-    border-radius: 20px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--text-muted);
-    cursor: pointer;
+    color: #64748b;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0;
   }
 
   .btn-view-mode:hover {
-    color: var(--text-main);
-    transform: scale(1.02);
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.06);
+    transform: scale(1.05);
   }
   .btn-view-mode:active {
-    transform: scale(0.96);
+    transform: scale(0.95);
   }
 
+  /* BOTÓN ACTIVO: AZUL BRILLANTE CON ICONO BLANCO */
   .btn-view-mode.active {
-    background: #ffffff;
-    color: var(--inacap-navy-dark);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-    border: 1px solid rgba(0, 75, 135, 0.18);
+    background: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.45);
   }
-
   .btn-view-mode.active:hover {
-    background: #ecfdf5;
-    color: #065f46;
-    border-color: #34d399;
-    box-shadow: 0 3px 12px rgba(16, 185, 129, 0.25);
+    background: #1d4ed8;
+    color: #ffffff;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.55);
   }
 
   /* ========================================================
@@ -726,19 +720,112 @@
     font-size: 1.15rem;
   }
 
+  /* BOTÓN HAMBURGUESA / COLAPSABLE DEL BANNER (SOLO MÓVIL) */
+  .hero-mobile-toggle-btn {
+    display: none;
+  }
+
   /* ========================================================
      RESPONSIVE BREAKPOINTS (AJUSTE MÓVIL Y RESOLUCIÓN DE BOTONES)
      ======================================================== */
   @media (max-width: 820px) {
-    .hero-top-row { flex-direction: column; align-items: stretch; gap: 14px; }
+    .hero-top-row { flex-direction: column; align-items: stretch; gap: 12px; margin-bottom: 0; }
     .hero-search-row { width: 100%; }
-    .hero-title { font-size: 1.4rem; }
-    .hero-unified { padding: 18px 16px 14px 16px; }
+    .hero-unified { padding: 16px 14px 14px 14px; }
     .hero-search-btn { justify-content: center; }
-    .hero-controls-shelf { flex-direction: column; align-items: stretch; gap: 10px; }
+
+    /* Barra superior del banner con Título + Botón Hamburguesa de Locales */
+    .hero-header-mobile-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+    }
+    .hero-text-col {
+      min-width: 0 !important;
+      flex: 1;
+    }
+    .hero-title {
+      font-size: 1.18rem;
+      line-height: 1.2;
+      margin-bottom: 0;
+      word-break: break-word;
+    }
+    .hero-subtitle {
+      display: none; /* Elimina texto redundante en celular para máxima limpieza */
+    }
+
+    .hero-mobile-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1.5px solid rgba(255, 255, 255, 0.38);
+      color: #ffffff;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+    .hero-mobile-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.28);
+      border-color: rgba(255, 255, 255, 0.6);
+      transform: scale(1.03);
+    }
+    .hero-mobile-toggle-btn.is-active {
+      background: #ffffff;
+      color: #9b2c30;
+      border-color: #ffffff;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: 420px) {
+      .hero-mobile-toggle-btn .hero-toggle-label {
+        display: none;
+      }
+      .hero-mobile-toggle-btn {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border-radius: 10px;
+        justify-content: center;
+      }
+    }
+
+    .hero-toggle-badge-dot {
+      width: 7px;
+      height: 7px;
+      background: #4ade80;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 6px #4ade80;
+    }
+
+    /* BANDEJA DE FILTROS COLAPSADA POR DEFECTO EN MÓVIL */
+    .hero-controls-shelf {
+      display: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 12px;
+      margin-top: 12px;
+      animation: shelfExpand 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .hero-controls-shelf.is-open {
+      display: flex;
+    }
+
     .btn-junaeb-toggle { justify-content: center; width: 100%; }
 
-    /* CORRECCIÓN BOTÓN CORTADO: Envoltorio natural y flexible en móviles */
+    /* Envoltorio de pestañas cuando se despliegan */
     .local-tabs {
       display: flex;
       flex-wrap: wrap;
@@ -758,18 +845,15 @@
     }
 
     .catalog-toolbar {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 10px;
-      padding: 10px 12px;
-    }
-    .catalog-view-switcher {
-      width: 100%;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
       justify-content: space-between;
     }
-    .btn-view-mode {
-      flex: 1;
-      justify-content: center;
+    .catalog-view-switcher {
+      flex-shrink: 0;
     }
 
     .local-header {
@@ -788,11 +872,20 @@
   <!-- BANNER UNIFICADO INSTITUCIONAL INACAP (HERO + BÚSQUEDA + JUNAEB + SELECTOR LOCALES) -->
   <section class="hero-unified">
     <div class="hero-top-row">
-      <div class="hero-text-col">
-        <h1 class="hero-title">Oferta Gastronómica Institucional</h1>
-        <p class="hero-subtitle">
-          Consulta en tiempo real la disponibilidad de menús en el Casino Central y la oferta de nuestros tres Food Trucks.
-        </p>
+      <div class="hero-header-mobile-bar">
+        <div class="hero-text-col">
+          <h1 class="hero-title">Oferta Gastronómica Institucional</h1>
+          <p class="hero-subtitle">
+            Consulta en tiempo real la disponibilidad de menús en el Casino Central y la oferta de nuestros tres Food Trucks.
+          </p>
+        </div>
+
+        <!-- Botón Hamburguesa de Locales y Filtros (Solo visible en Móvil) -->
+        <button type="button" class="hero-mobile-toggle-btn" id="heroMobileFilterToggle" aria-expanded="false" aria-label="Abrir filtros de locales">
+          <span class="hero-toggle-icon" style="font-size: 1.1rem; line-height: 1;">☰</span>
+          <span class="hero-toggle-label">Locales</span>
+          {% if local_seleccionado or filtro_junaeb %}<span class="hero-toggle-badge-dot"></span>{% endif %}
+        </button>
       </div>
 
       <!-- Barra de búsqueda rápida integrada a la derecha -->
@@ -807,7 +900,7 @@
     </div>
 
     <!-- Bandeja Integrada de Controles (JUNAEB + Pestañas de Locales) -->
-    <div class="hero-controls-shelf">
+    <div class="hero-controls-shelf" id="heroControlsShelf">
       <div class="hero-controls-left">
         <!-- FILTRADO JUNAEB (RF04) -->
         {% if filtro_junaeb %}
@@ -849,12 +942,26 @@
       <span>🍽️ <strong>Oferta y Disponibilidad</strong></span>
     </div>
     <div class="catalog-view-switcher" role="group" aria-label="Cambiar modo de visualización">
-      <span class="view-switcher-label">Modo:</span>
-      <button type="button" class="btn-view-mode active" id="btn-view-completa" onclick="setCatalogView('completa')" title="Vista tradicional con tarjetas y fotografías ampliadas">
-        <span>🖼️</span> <span>Completa</span>
+      <!-- Botón Modo Lista / Simplificada (Izquierda) -->
+      <button type="button" class="btn-view-mode" id="btn-view-simplificada" onclick="setCatalogView('simplificada')" title="Vista en Lista Simplificada (Móvil)" aria-label="Vista en lista simplificada">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="8.5" y1="6" x2="21" y2="6"></line>
+          <line x1="8.5" y1="12" x2="21" y2="12"></line>
+          <line x1="8.5" y1="18" x2="21" y2="18"></line>
+          <circle cx="3.5" cy="6" r="1.5" fill="currentColor"></circle>
+          <circle cx="3.5" cy="12" r="1.5" fill="currentColor"></circle>
+          <circle cx="3.5" cy="18" r="1.5" fill="currentColor"></circle>
+        </svg>
       </button>
-      <button type="button" class="btn-view-mode" id="btn-view-simplificada" onclick="setCatalogView('simplificada')" title="Vista simplificada compacta ideal para celulares">
-        <span>📱</span> <span>Simplificada</span>
+
+      <!-- Botón Modo Cuadrícula / Completa (Derecha) -->
+      <button type="button" class="btn-view-mode active" id="btn-view-completa" onclick="setCatalogView('completa')" title="Vista en Cuadrícula Completa con Fotografías" aria-label="Vista en cuadrícula completa">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+          <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+          <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+        </svg>
       </button>
     </div>
   </div>
@@ -1130,6 +1237,24 @@
       try { localStorage.setItem('inacap_catalogo_view', 'completa'); } catch(e) {}
     }
   }
+
+  // Control de colapsado móvil para la bandeja de locales y filtros del banner
+  (function initHeroMobileToggle() {
+    var toggleBtn = document.getElementById('heroMobileFilterToggle');
+    var shelf = document.getElementById('heroControlsShelf');
+    if (!toggleBtn || !shelf) return;
+
+    toggleBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      var isOpen = shelf.classList.toggle('is-open');
+      toggleBtn.classList.toggle('is-active', isOpen);
+      toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      var icon = toggleBtn.querySelector('.hero-toggle-icon');
+      if (icon) {
+        icon.textContent = isOpen ? '✕' : '☰';
+      }
+    });
+  })();
 
   // Sincronizar botones de la barra de vistas tras carga completa
   document.addEventListener('DOMContentLoaded', function() {
