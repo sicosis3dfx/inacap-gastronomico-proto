@@ -49,8 +49,8 @@ fetch('/api/producto/1/promo-flash/', {
 python -c "import os, django; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mi_proyecto.test_settings'); django.setup(); from django.test import Client; from django.contrib.auth.models import User; u = User.objects.create_user('demo_op'); c = Client(); c.force_login(u); r = c.post('/api/producto/1/promo-flash/', {'precio_oferta': -500}, content_type='application/json'); print('--> ESTADO HTTP:', r.status_code, r.json())"
 ```
 
-### 🎙️ Lo que debe decir el expositor:
-> *"Profesora, aquí provocamos un intento de manipulación transaccional enviando un precio de oferta negativo. Como se aprecia en la consola, el backend intercepta el valor anómalo y responde con un **HTTP 400 Bad Request**, garantizando el principio de integridad de datos según la norma **ISO/IEC 27001 Control A.8.28**."*
+### 🎙️ Libreto para la Comisión Evaluadora:
+> *"Ahora, en este escenario simulamos un intento de manipulación transaccional enviando un valor anómalo e inconsistente (precio de oferta negativo de -$500). Como se puede observar en la respuesta de la consola, el sistema no delega la seguridad exclusivamente en la interfaz gráfica, sino que el backend intercepta el payload y responde con un **HTTP 400 Bad Request**, garantizando el principio de integridad transaccional bajo el **Control A.8.28 de la norma internacional ISO/IEC 27001**."*
 
 ---
 
@@ -88,8 +88,8 @@ fetch('/api/producto/14/stock/', {
 .\.venv\Scripts\python.exe manage.py test gastronomia.tests.PanelOperadorSeguridadTest.test_actualizar_stock_local_ajeno_bloqueado --settings=mi_proyecto.test_settings -v 2
 ```
 
-### 🎙️ Lo que debe decir el expositor:
-> *"En esta prueba simulamos un ataque IDOR donde el operador intenta alterar el stock de un producto ajeno (ID 14 de Food Truck 1). El sistema valida la pertenencia relacional en el ORM (`local__operador == request.user`) y deniega inmediatamente la operación con un **HTTP 403 Forbidden**, dando cumplimiento a la **Ley N° 21.459** sobre acceso indebido."*
+### 🎙️ Libreto para la Comisión Evaluadora:
+> *"Estimada Comisión, a continuación evidenciamos la mitigación de la vulnerabilidad crítica **OWASP Top 10 A01 (Broken Access Control)** y la adherencia al **Artículo 2° de la Ley Chilena N° 21.459 sobre Delitos Informáticos**. Simulamos un ataque IDOR donde un operador autenticado intenta alterar de forma ilícita el stock de un establecimiento ajeno (Producto ID 14 de Food Truck 1). El ORM de Django evalúa la pertenencia relacional (`local.operador == request.user`) y deniega inmediatamente la transacción devolviendo un **HTTP 403 Forbidden** con tipificación legal explícita."*
 
 ---
 
@@ -113,8 +113,8 @@ fetch('/api/producto/999999/stock/', {
 });
 ```
 
-### 🎙️ Lo que debe decir el expositor:
-> *"Ante identificadores inexistentes (`get_object_or_404`), la arquitectura responde limpiamente con **HTTP 404**, evitando fugas de información técnica o caídas del proceso según la subcaracterística de tolerancia a fallos de la norma **ISO/IEC 25010**."*
+### 🎙️ Libreto para la Comisión Evaluadora:
+> *"Para garantizar la tolerancia a fallos exigida por la norma **ISO/IEC 25010**, el sistema gestiona de manera controlada las solicitudes dirigidas hacia recursos inexistentes mediante la directiva `get_object_or_404`. Como aprecia la Comisión, el servidor responde con un **HTTP 404 Not Found** estructurado, impidiendo fugas de trazas internas o excepciones no controladas en el servidor de producción."*
 
 ---
 
@@ -133,8 +133,8 @@ fetch('/api/producto/1/stock/', {
 });
 ```
 
-### 🎙️ Lo que debe decir el expositor:
-> *"Para blindar los endpoints transaccionales contra ataques CSRF simplificados por enlaces GET, aplicamos la restricción estricta de métodos HTTP en Django. Si se intenta consultar por GET, el servidor devuelve un **HTTP 405 Method Not Allowed**."*
+### 🎙️ Libreto para la Comisión Evaluadora:
+> *"Finalmente, para neutralizar vectores de ataque CSRF basados en enlaces forzados, restringimos los verbos HTTP mediante el decorador `@require_http_methods(['POST'])`. Al intentar consumir el servicio transaccional mediante el verbo GET, el servidor rechaza la solicitud devolviendo un código **HTTP 405 Method Not Allowed**, ratificando una arquitectura defensiva en todas sus capas."*
 
 ---
 
