@@ -149,21 +149,24 @@
   .item-action-col {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
+    flex-shrink: 0;
   }
 
-  /* SWITCH ESTILO iOS INTERACTIVO */
-  .switch-container {
-    display: flex;
-    flex-direction: column;
+  /* CONTROL DE STOCK Y SWITCH iOS SLIM & PROPORCIONADO */
+  .stock-control-group {
+    display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
+    flex-shrink: 0;
   }
+
   .switch {
     position: relative;
     display: inline-block;
-    width: 58px;
-    height: 32px;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
   }
   .switch input {
     opacity: 0;
@@ -178,26 +181,26 @@
     right: 0;
     bottom: 0;
     background-color: #cbd5e1;
-    transition: 0.3s;
-    border-radius: 34px;
+    transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 24px;
   }
   .slider:before {
     position: absolute;
     content: "";
-    height: 24px;
-    width: 24px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: 0.3s;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #ffffff;
+    transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
   }
   input:checked + .slider {
     background-color: #2e7d32;
   }
   input:checked + .slider:before {
-    transform: translateX(26px);
+    transform: translateX(20px);
   }
 
   /* TOAST NOTIFICATION */
@@ -403,8 +406,39 @@
 
   @media (max-width: 640px) {
     .panel-top-row { flex-direction: column; align-items: flex-start; }
-    .stock-item-row { flex-direction: column; align-items: flex-start; }
-    .item-action-col { width: 100%; justify-content: space-between; border-top: 1px dashed var(--border); padding-top: 10px; }
+    .stock-item-row {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 14px;
+      gap: 10px;
+    }
+    .item-info-col {
+      width: 100%;
+    }
+    .item-action-col {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-top: 1px dashed var(--border);
+      padding-top: 10px;
+      margin-top: 2px;
+    }
+    .btn-promo-toggle {
+      padding: 6px 12px;
+      font-size: 0.8rem;
+    }
+    .stock-control-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .stock-control-group .badge {
+      font-size: 0.72rem;
+      padding: 4px 7px;
+      letter-spacing: 0.2px;
+    }
   }
 </style>
 {% endblock %}
@@ -523,11 +557,11 @@
               ⚡ {% if item.promo_flash %}Promo Activa{% else %}Configurar Promo{% endif %}
             </button>
 
-            <span id="badge-stock-{{ item.producto.id_producto }}" class="badge {% if item.producto.disponible %}badge-disponible{% else %}badge-agotado{% endif %}">
-              {% if item.producto.disponible %}✅ DISPONIBLE{% else %}⛔ AGOTADO{% endif %}
-            </span>
+            <div class="stock-control-group">
+              <span id="badge-stock-{{ item.producto.id_producto }}" class="badge {% if item.producto.disponible %}badge-disponible{% else %}badge-agotado{% endif %}">
+                {% if item.producto.disponible %}✅ DISPONIBLE{% else %}⛔ AGOTADO{% endif %}
+              </span>
 
-            <div class="switch-container">
               <label class="switch" title="Conmutar stock en 1 clic">
                 <input type="checkbox"
                        class="stock-toggle-input"
@@ -537,7 +571,6 @@
                        onchange="conmutarStock(this);">
                 <span class="slider"></span>
               </label>
-              <span style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">Stock</span>
             </div>
           </div>
 
