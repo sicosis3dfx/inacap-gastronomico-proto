@@ -202,15 +202,17 @@
     align-items: center;
     gap: 6px;
   }
-  .tab-item:hover {
-    background: #ecfdf5;
-    color: #065f46;
-    border-color: #34d399;
-    transform: scale(1.04);
-    box-shadow: 0 5px 16px rgba(16, 185, 129, 0.28), 0 0 0 2px #6ee7b7;
-  }
   .tab-item:active {
     transform: scale(0.96);
+  }
+  @media (hover: hover) {
+    .tab-item:hover {
+      background: #ecfdf5;
+      color: #065f46;
+      border-color: #34d399;
+      transform: scale(1.03);
+      box-shadow: 0 5px 16px rgba(16, 185, 129, 0.28), 0 0 0 2px #6ee7b7;
+    }
   }
   .tab-item.active {
     background: #0f172a;
@@ -218,11 +220,13 @@
     border-color: #0f172a;
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
   }
-  .tab-item.active:hover {
-    background: #064e3b;
-    border-color: #10b981;
-    transform: scale(1.04);
-    box-shadow: 0 5px 18px rgba(16, 185, 129, 0.4), 0 0 0 2px #34d399;
+  @media (hover: hover) {
+    .tab-item.active:hover {
+      background: #064e3b;
+      border-color: #10b981;
+      transform: scale(1.03);
+      box-shadow: 0 5px 18px rgba(16, 185, 129, 0.4), 0 0 0 2px #34d399;
+    }
   }
 
   .query-notice-badge {
@@ -757,16 +761,17 @@
     }
 
     .hero-mobile-toggle-btn {
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 6px;
       background: rgba(255, 255, 255, 0.18);
       border: 1.5px solid rgba(255, 255, 255, 0.38);
       color: #ffffff;
       border-radius: 20px;
-      padding: 6px 12px;
-      font-size: 0.8rem;
+      padding: 6px 14px;
+      font-size: 0.82rem;
       font-weight: 700;
       cursor: pointer;
       flex-shrink: 0;
@@ -791,8 +796,8 @@
         display: none;
       }
       .hero-mobile-toggle-btn {
-        width: 36px;
-        height: 36px;
+        width: 38px;
+        height: 38px;
         padding: 0;
         border-radius: 10px;
         justify-content: center;
@@ -800,12 +805,19 @@
     }
 
     .hero-toggle-badge-dot {
-      width: 7px;
-      height: 7px;
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 8px;
+      height: 8px;
       background: #4ade80;
+      border: 1.5px solid #9b2c30;
       border-radius: 50%;
       display: inline-block;
       box-shadow: 0 0 6px #4ade80;
+    }
+    .hero-mobile-toggle-btn.is-active .hero-toggle-badge-dot {
+      display: none;
     }
 
     .hero-mobile-toggle-btn .hero-toggle-icon {
@@ -827,19 +839,22 @@
       overflow: hidden;
       margin-top: 0;
       padding-top: 0;
+      padding-bottom: 0;
       border-top: 1px solid transparent;
       pointer-events: none;
-      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                   opacity 0.25s ease,
                   margin-top 0.3s ease,
                   padding-top 0.3s ease,
+                  padding-bottom 0.3s ease,
                   border-color 0.25s ease;
     }
     .hero-controls-shelf.is-open {
-      max-height: 380px;
+      max-height: 750px;
       opacity: 1;
       margin-top: 12px;
       padding-top: 14px;
+      padding-bottom: 8px;
       border-top-color: rgba(255, 255, 255, 0.2);
       pointer-events: auto;
     }
@@ -857,8 +872,8 @@
       width: 100%;
     }
     .tab-item {
-      padding: 7px 12px;
-      font-size: 0.82rem;
+      padding: 8px 14px;
+      font-size: 0.83rem;
       flex: 1 1 auto;
       justify-content: center;
       text-align: center;
@@ -910,11 +925,11 @@
       </div>
 
       <!-- Barra de búsqueda rápida integrada a la derecha -->
-      <form method="get" action="{% url 'catalogo_publico' %}" class="hero-search-row">
+      <form method="get" action="{% url 'catalogo_publico' %}" class="hero-search-row" id="catalogSearchForm">
         {% if filtro_junaeb %}<input type="hidden" name="junaeb" value="1">{% endif %}
         {% if local_seleccionado %}<input type="hidden" name="local" value="{{ local_seleccionado }}">{% endif %}
-        <input type="text" name="q" value="{{ query_busqueda }}" class="hero-search-input" placeholder="Buscar por plato, sándwich o bebida...">
-        <button type="submit" class="hero-search-btn">
+        <input type="text" name="q" value="{{ query_busqueda }}" class="hero-search-input" id="heroSearchInput" placeholder="Buscar por plato, sándwich o bebida...">
+        <button type="submit" class="hero-search-btn" id="heroSearchBtn">
           🔍 Buscar
         </button>
       </form>
@@ -925,12 +940,21 @@
       <div class="hero-controls-left">
         <!-- FILTRADO JUNAEB (RF04) -->
         {% if filtro_junaeb %}
-          <a href="?{% if local_seleccionado %}local={{ local_seleccionado }}&{% endif %}{% if query_busqueda %}q={{ query_busqueda }}{% endif %}" class="btn-junaeb-toggle active" title="Desactivar filtro JUNAEB">
+          <a href="?{% if local_seleccionado %}local={{ local_seleccionado }}&{% endif %}{% if query_busqueda %}q={{ query_busqueda }}{% endif %}"
+             class="btn-junaeb-toggle active"
+             id="btnJunaebToggle"
+             data-type="junaeb"
+             data-active="true"
+             title="Presiona para desactivar el filtro JUNAEB">
             <span>💳 Beneficio JUNAEB Activado</span>
-            <span style="font-size: 1.1rem; line-height: 1;">&times;</span>
           </a>
         {% else %}
-          <a href="?junaeb=1{% if local_seleccionado %}&local={{ local_seleccionado }}{% endif %}{% if query_busqueda %}&q={{ query_busqueda }}{% endif %}" class="btn-junaeb-toggle" title="Filtrar solo productos que aceptan JUNAEB">
+          <a href="?junaeb=1{% if local_seleccionado %}&local={{ local_seleccionado }}{% endif %}{% if query_busqueda %}&q={{ query_busqueda }}{% endif %}"
+             class="btn-junaeb-toggle"
+             id="btnJunaebToggle"
+             data-type="junaeb"
+             data-active="false"
+             title="Filtrar solo productos que aceptan JUNAEB">
             <span>💳 Solo Acepta JUNAEB</span>
           </a>
         {% endif %}
@@ -938,20 +962,43 @@
         {% if query_busqueda %}
           <span class="query-notice-badge">
             Resultados: <strong>"{{ query_busqueda }}"</strong>
-            <a href="{% url 'catalogo_publico' %}{% if filtro_junaeb %}?junaeb=1{% endif %}" style="color: #fef08a; text-decoration: underline; margin-left: 4px; font-weight: 700;">[Limpiar]</a>
+            <a href="{% url 'catalogo_publico' %}?{% if filtro_junaeb %}junaeb=1&{% endif %}{% if local_seleccionado %}local={{ local_seleccionado }}{% endif %}"
+               class="btn-clear-query"
+               style="color: #fef08a; text-decoration: underline; margin-left: 4px; font-weight: 700;"
+               title="Limpiar búsqueda de texto">[Limpiar]</a>
           </span>
         {% endif %}
       </div>
 
       <!-- Pestañas de locales integradas -->
       <div class="local-tabs">
-        <a href="?{% if filtro_junaeb %}junaeb=1&{% endif %}{% if query_busqueda %}q={{ query_busqueda }}{% endif %}" class="tab-item {% if not local_seleccionado %}active{% endif %}">
+        <a href="?{% if filtro_junaeb %}junaeb=1&{% endif %}{% if query_busqueda %}q={{ query_busqueda }}{% endif %}"
+           class="tab-item {% if not local_seleccionado %}active{% endif %}"
+           data-type="local"
+           data-local-id=""
+           data-active="{% if not local_seleccionado %}true{% else %}false{% endif %}">
           Todos los Locales
         </a>
         {% for loc in todos_locales %}
-          <a href="?local={{ loc.id_local }}{% if filtro_junaeb %}&junaeb=1{% endif %}{% if query_busqueda %}&q={{ query_busqueda }}{% endif %}" class="tab-item {% if local_seleccionado == loc.id_local %}active{% endif %}">
-            {% if loc.tipo == 'Casino' %}🍽️{% else %}🚚{% endif %} {{ loc.nombre }}
-          </a>
+          {% if local_seleccionado == loc.id_local %}
+            <a href="?{% if filtro_junaeb %}junaeb=1&{% endif %}{% if query_busqueda %}q={{ query_busqueda }}{% endif %}"
+               class="tab-item active"
+               data-type="local"
+               data-local-id="{{ loc.id_local }}"
+               data-active="true"
+               title="Deseleccionar {{ loc.nombre }} (ver todos los locales)">
+              {% if loc.tipo == 'Casino' %}🍽️{% else %}🚚{% endif %} {{ loc.nombre }}
+            </a>
+          {% else %}
+            <a href="?local={{ loc.id_local }}{% if filtro_junaeb %}&junaeb=1{% endif %}{% if query_busqueda %}&q={{ query_busqueda }}{% endif %}"
+               class="tab-item"
+               data-type="local"
+               data-local-id="{{ loc.id_local }}"
+               data-active="false"
+               title="Filtrar por {{ loc.nombre }}">
+              {% if loc.tipo == 'Casino' %}🍽️{% else %}🚚{% endif %} {{ loc.nombre }}
+            </a>
+          {% endif %}
         {% endfor %}
       </div>
     </div>
@@ -988,7 +1035,7 @@
   </div>
 
   <!-- CONTENEDOR PRINCIPAL DEL CATÁLOGO CON CONMUTACIÓN DINÁMICA DE VISTA -->
-  <div id="catalogo-content-area" class="view-completa">
+  <div id="catalogo-content-area" class="view-completa" style="transition: opacity 0.2s ease;">
     <script>
       /* Inicialización inmediata: Vista en Cuadrícula Completa por defecto */
       (function() {
@@ -1241,7 +1288,7 @@
 <script>
   /**
    * Conmutador reactivo entre Vista Completa y Vista Simplificada (Móvil)
-   * Almacena la preferencia del estudiante en localStorage y actualiza la interfaz al instante.
+   * Almacena la preferencia del estudiante en localStorage y actualiza la interfaz al instante (0ms).
    */
   function setCatalogView(mode) {
     var area = document.getElementById('catalogo-content-area');
@@ -1280,13 +1327,165 @@
     });
   })();
 
-  // Sincronizar botones de la barra de vistas tras carga completa (Cuadrícula Completa por defecto)
+  /**
+   * CARGA ASÍNCRONA REACTIVA CON FETCH (SIN RECARGA COMPLETA DE PÁGINA)
+   * Permite activar y desactivar filtros de JUNAEB, locales específicos y búsquedas
+   * manteniendo la vista suave, sin parpadeos y actualizando la URL de forma fluida.
+   */
+  var isFetchingCatalog = false;
+
+  function fetchCatalog(url, pushState) {
+    if (isFetchingCatalog) return;
+    isFetchingCatalog = true;
+
+    var area = document.getElementById('catalogo-content-area');
+    if (area) {
+      area.style.opacity = '0.4';
+      area.style.pointerEvents = 'none';
+    }
+
+    fetch(url, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('Respuesta HTTP no satisfactoria: ' + res.status);
+      return res.text();
+    })
+    .then(function(html) {
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(html, 'text/html');
+
+      // 1. Actualizar catálogo de productos y promociones
+      var newArea = doc.getElementById('catalogo-content-area');
+      if (area && newArea) {
+        var savedMode = localStorage.getItem('inacap_catalogo_view') || 'completa';
+        area.className = (savedMode === 'simplificada') ? 'view-simplificada' : 'view-completa';
+        area.innerHTML = newArea.innerHTML;
+        area.style.opacity = '1';
+        area.style.pointerEvents = 'auto';
+      }
+
+      // 2. Actualizar bandeja de controles (botones JUNAEB y selector de locales)
+      var currentShelf = document.getElementById('heroControlsShelf');
+      var newShelf = doc.getElementById('heroControlsShelf');
+      if (currentShelf && newShelf) {
+        var wasOpen = currentShelf.classList.contains('is-open');
+        currentShelf.innerHTML = newShelf.innerHTML;
+        if (wasOpen) {
+          currentShelf.classList.add('is-open');
+        }
+      }
+
+      // 3. Sincronizar indicador de dot en el botón móvil
+      var toggleBtn = document.getElementById('heroMobileFilterToggle');
+      var newToggleBtn = doc.getElementById('heroMobileFilterToggle');
+      if (toggleBtn && newToggleBtn) {
+        var existingDot = toggleBtn.querySelector('.hero-toggle-badge-dot');
+        var incomingDot = newToggleBtn.querySelector('.hero-toggle-badge-dot');
+        if (incomingDot && !existingDot) {
+          toggleBtn.appendChild(incomingDot.cloneNode(true));
+        } else if (!incomingDot && existingDot) {
+          existingDot.remove();
+        }
+      }
+
+      // 4. Sincronizar inputs de búsqueda y formulario
+      var currentInput = document.getElementById('heroSearchInput');
+      var newInput = doc.getElementById('heroSearchInput');
+      if (currentInput && newInput && document.activeElement !== currentInput) {
+        currentInput.value = newInput.value;
+      }
+
+      // 5. Actualizar URL en barra de direcciones sin recarga
+      if (pushState !== false) {
+        try {
+          window.history.pushState({ url: url }, '', url);
+        } catch(e) {}
+      }
+
+      // 6. Re-vincular eventos interactivos sobre el nuevo HTML inyectado
+      bindInteractiveControls();
+      isFetchingCatalog = false;
+    })
+    .catch(function(err) {
+      console.warn('Fallo en fetch reactivo, recurriendo a navegación tradicional:', err);
+      isFetchingCatalog = false;
+      if (area) {
+        area.style.opacity = '1';
+        area.style.pointerEvents = 'auto';
+      }
+      window.location.href = url;
+    });
+  }
+
+  function bindInteractiveControls() {
+    // 1. Botón JUNAEB (alternar activar/desactivar en 1 clic)
+    var btnJunaeb = document.getElementById('btnJunaebToggle');
+    if (btnJunaeb) {
+      btnJunaeb.onclick = function(e) {
+        e.preventDefault();
+        fetchCatalog(btnJunaeb.getAttribute('href'));
+      };
+    }
+
+    // 2. Pestañas de Locales (seleccionar y deseleccionar para volver a todos)
+    var localTabs = document.querySelectorAll('.local-tabs .tab-item');
+    localTabs.forEach(function(tab) {
+      tab.onclick = function(e) {
+        e.preventDefault();
+        fetchCatalog(tab.getAttribute('href'));
+      };
+    });
+
+    // 3. Botón Limpiar Búsqueda en el badge de aviso
+    var clearBtns = document.querySelectorAll('.btn-clear-query');
+    clearBtns.forEach(function(btn) {
+      btn.onclick = function(e) {
+        e.preventDefault();
+        var currentInput = document.getElementById('heroSearchInput');
+        if (currentInput) currentInput.value = '';
+        fetchCatalog(btn.getAttribute('href'));
+      };
+    });
+  }
+
+  // Interceptar formulario de búsqueda para búsqueda asíncrona mediante fetch
+  (function initSearchFormFetch() {
+    var searchForm = document.getElementById('catalogSearchForm');
+    if (!searchForm) return;
+
+    searchForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var input = document.getElementById('heroSearchInput');
+      var qVal = input ? input.value.trim() : '';
+
+      var url = new URL(window.location.href);
+      if (qVal) {
+        url.searchParams.set('q', qVal);
+      } else {
+        url.searchParams.delete('q');
+      }
+
+      fetchCatalog(url.pathname + (url.searchParams.toString() ? '?' + url.searchParams.toString() : ''));
+    });
+  })();
+
+  // Soporte para botones Atrás/Adelante del navegador
+  window.addEventListener('popstate', function() {
+    fetchCatalog(window.location.href, false);
+  });
+
+  // Sincronizar botones de vista y controles tras DOM listo
   document.addEventListener('DOMContentLoaded', function() {
     try {
       var saved = localStorage.getItem('inacap_catalogo_view');
       var activeMode = (saved === 'simplificada') ? 'simplificada' : 'completa';
       setCatalogView(activeMode);
     } catch(e) {}
+
+    bindInteractiveControls();
   });
 </script>
 {% endblock %}
