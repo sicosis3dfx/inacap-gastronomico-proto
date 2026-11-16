@@ -84,7 +84,7 @@
     .navbar-container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 6px 16px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -92,24 +92,25 @@
     }
 
     .brand-link {
-      display: inline-flex;
+      display: flex;
       align-items: center;
+      gap: 10px;
       text-decoration: none;
-      transition: transform 0.2s ease, opacity 0.2s ease;
-    }
-
-    .brand-link:hover {
-      transform: scale(1.02);
-      opacity: 0.95;
+      color: var(--inacap-navy-dark);
     }
 
     .brand-logo-img {
-      height: 76px;
-      max-height: 82px;
+      height: 42px;
       width: auto;
+      border-radius: var(--radius-sm);
       display: block;
       object-fit: contain;
-      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08));
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      transition: transform 0.2s ease;
+    }
+
+    .brand-logo-img:hover {
+      transform: scale(1.03);
     }
 
     .brand-text-block {
@@ -231,22 +232,6 @@
       align-items: center;
     }
 
-    .footer-logo-img {
-      height: 38px;
-      width: auto;
-      border-radius: var(--radius-sm);
-      display: block;
-      margin-bottom: 4px;
-      object-fit: contain;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      transition: transform 0.2s ease, opacity 0.2s ease;
-      opacity: 0.95;
-    }
-    .footer-logo-img:hover {
-      transform: scale(1.04);
-      opacity: 1;
-    }
-
     /* FORMULARIOS Y CONTROLES GLOBALES */
     .form-input-control {
       width: 100%;
@@ -361,12 +346,17 @@
       .navbar-container {
         flex-direction: column;
         align-items: flex-start;
-        padding: 6px 12px;
-        gap: 6px;
+        padding: 8px 12px;
+        gap: 8px;
       }
       .brand-logo-img {
-        height: 52px;
-        max-height: 56px;
+        height: 32px;
+      }
+      .brand-title {
+        font-size: 0.95rem;
+      }
+      .brand-subtitle {
+        font-size: 0.7rem;
       }
       .nav-actions {
         width: 100%;
@@ -400,8 +390,12 @@
   <!-- Navbar -->
   <nav class="navbar">
     <div class="navbar-container">
-      <a href="{% url 'catalogo_publico' %}" class="brand-link" title="Ir al inicio del Catálogo">
-        <img src="{% static 'gastronomia/brand_portal_gastronomico.png' %}" alt="Portal Gastronómico INACAP Sede Renca" class="brand-logo-img">
+      <a href="{% url 'catalogo_publico' %}" class="brand-link">
+        <img src="{% static 'gastronomia/inacap_logo.png' %}" alt="Logo Oficial INACAP" class="brand-logo-img">
+        <div class="brand-text-block">
+          <span class="brand-title">Portal Gastronómico</span>
+          <span class="brand-subtitle">Sede Renca &bull; Plataforma Oficial</span>
+        </div>
       </a>
 
       <div class="nav-actions">
@@ -460,9 +454,6 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-content">
-      <a href="{% url 'catalogo_publico' %}" title="INACAP Sede Renca">
-        <img src="{% static 'gastronomia/inacap_logo.png' %}" alt="Logo Oficial INACAP" class="footer-logo-img">
-      </a>
       <p><strong>Sistema de Información Gastronómica — INACAP Sede Renca</strong></p>
       <p>Casino Central &bull; Food Truck 1 &bull; Food Truck 2 &bull; Food Truck 3 &bull; Integración con Tarjeta JUNAEB</p>
       <p style="font-size: 0.78rem; opacity: 0.8;">Cumplimiento Ley N° 21.459 sobre Delitos Informáticos &bull; Arquitectura Segura OWASP A01 / A02 / A03</p>
