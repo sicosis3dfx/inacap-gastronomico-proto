@@ -1623,6 +1623,10 @@
     if (isFetchingCatalog) return;
     isFetchingCatalog = true;
 
+    if (typeof window.showProcessingHUD === 'function') {
+      window.showProcessingHUD('PORTAL GASTRONÓMICO', 'Consultando disponibilidad en locales...');
+    }
+
     var area = document.getElementById('catalogo-content-area');
     if (area) {
       area.style.opacity = '0.4';
@@ -1693,10 +1697,16 @@
       // 6. Re-vincular eventos interactivos sobre el nuevo HTML inyectado
       bindInteractiveControls();
       isFetchingCatalog = false;
+      if (typeof window.hideProcessingHUD === 'function') {
+        window.hideProcessingHUD();
+      }
     })
     .catch(function(err) {
       console.warn('Fallo en fetch reactivo, recurriendo a navegación tradicional:', err);
       isFetchingCatalog = false;
+      if (typeof window.hideProcessingHUD === 'function') {
+        window.hideProcessingHUD();
+      }
       if (area) {
         area.style.opacity = '1';
         area.style.pointerEvents = 'auto';

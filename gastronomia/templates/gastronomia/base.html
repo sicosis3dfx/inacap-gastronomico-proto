@@ -382,11 +382,271 @@
         padding: 12px 10px;
       }
     }
+
+    /* ============================================================
+       1. PANTALLA DE CARGA EXCLUSIVA PARA INICIO Y CIERRE DE SESIÓN
+       ============================================================ */
+    .inacap-preloader {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.98) 0%, rgba(241,245,249,0.98) 100%) !important;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 2147483647 !important;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  visibility 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .inacap-preloader.is-visible {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+    .preloader-card {
+      background: #ffffff;
+      padding: 34px 44px;
+      border-radius: 22px;
+      box-shadow: 0 16px 45px -4px rgba(0, 0, 0, 0.14), 0 4px 14px rgba(183, 28, 28, 0.1);
+      border: 1.5px solid rgba(183, 28, 28, 0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      text-align: center;
+      max-width: 90vw;
+      animation: preloaderCardPop 0.35s ease-out;
+    }
+    .preloader-logo {
+      height: 52px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+      animation: preloaderPulse 2s infinite ease-in-out;
+    }
+    .preloader-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3.5px solid #e2e8f0;
+      border-top-color: var(--inacap-red-dark);
+      border-radius: 50%;
+      animation: preloaderSpin 0.75s linear infinite;
+    }
+    .preloader-text-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .preloader-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.2px;
+    }
+    .preloader-subtitle {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--inacap-red-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    @keyframes preloaderSpin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes preloaderPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06)); }
+      50% { transform: scale(1.05); filter: drop-shadow(0 4px 12px rgba(183,28,28,0.22)); }
+    }
+    @keyframes preloaderCardPop {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* ============================================================
+       2. BANNER HUD DE PROCESAMIENTO / CARGAS DE PÁGINA (ESTILO TECH)
+          Inferior derecha en Desktop, centrado en modo responsivo móvil
+          Fondo blanco, borde rojo chillón (#ff1744) y sombra difuminada
+       ============================================================ */
+    .inacap-hud-banner {
+      position: fixed !important;
+      z-index: 2147483646 !important;
+      bottom: 24px !important;
+      right: 24px !important;
+      top: auto !important;
+      left: auto !important;
+      transform: translateY(20px) scale(0.95);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      background: #ffffff !important;
+      border: 2px solid #ff1744 !important; /* Rojo intenso chillón */
+      border-radius: 20px;
+      padding: 12px 22px 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18),
+                  0 0 28px rgba(255, 23, 68, 0.35),
+                  0 3px 10px rgba(0, 0, 0, 0.08);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                  opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 440px;
+      min-width: 290px;
+      box-sizing: border-box;
+    }
+
+    /* Modo Activo (Desciende/Aparece suavemente en esquina inferior derecha) */
+    .inacap-hud-banner.is-active {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateY(0) scale(1) !important;
+    }
+
+    /* Contenedor Spinner & Logo Core */
+    .hud-spinner-wrapper {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hud-spinner-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2.5px solid #ffe4e6;
+      border-top-color: #ff1744; /* Rojo chillón */
+      border-right-color: #ff5252;
+      filter: drop-shadow(0 0 5px rgba(255, 23, 68, 0.45));
+      animation: hudRingSpin 0.75s linear infinite;
+    }
+
+    @keyframes hudRingSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hud-logo-core {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1px solid #fecdd3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .hud-logo-img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      border-radius: 3px;
+      display: block;
+    }
+
+    /* Textos Institucionales con ajuste flex para evitar desbordes */
+    .hud-text-col {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .hud-brand-tag {
+      font-family: var(--font-heading);
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #ff1744; /* Rojo chillón */
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hud-message {
+      font-family: var(--font-sans);
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #0f172a; /* Letras negras / carbón */
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    /* Adaptación Responsiva Centrada para móviles y tablets */
+    @media (max-width: 640px) {
+      .inacap-hud-banner {
+        right: auto !important;
+        left: 50% !important;
+        bottom: 18px !important;
+        top: auto !important;
+        transform: translate(-50%, 20px) scale(0.95) !important;
+        width: calc(100vw - 32px) !important;
+        max-width: 400px !important;
+        padding: 10px 16px 10px 12px !important;
+        gap: 12px !important;
+      }
+      .inacap-hud-banner.is-active {
+        transform: translate(-50%, 0) scale(1) !important;
+      }
+      .hud-message {
+        font-size: 0.86rem;
+        line-height: 1.25;
+      }
+    }
   </style>
 
   {% block extra_head %}{% endblock %}
 </head>
 <body>
+
+  <!-- 1. PANTALLA DE CARGA INSTITUCIONAL EXCLUSIVA PARA INICIO Y CIERRE DE SESIÓN (SPLASH) -->
+  <div id="inacapPreloader" class="inacap-preloader" aria-live="polite" aria-label="Cargando portal gastronómico">
+    <div class="preloader-card">
+      <img src="{% static 'gastronomia/inacap_logo.png' %}" alt="Logo Oficial INACAP" class="preloader-logo">
+      <div class="preloader-spinner"></div>
+      <div class="preloader-text-wrap">
+        <span class="preloader-title">Cargando...</span>
+        <span class="preloader-subtitle">Portal Gastronómico &bull; INACAP Renca</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. BANNER HUD DE PROCESAMIENTO / CARGAS DE PÁGINA (BLANCO CON ROJO Y LETRAS NEGRAS) -->
+  <div id="inacapProcessingHUD" class="inacap-hud-banner" role="status" aria-live="polite">
+    <div class="hud-spinner-wrapper">
+      <div class="hud-spinner-ring"></div>
+      <div class="hud-logo-core">
+        <img src="{% static 'gastronomia/inacap_sq.png' %}" alt="INACAP" class="hud-logo-img">
+      </div>
+    </div>
+    <div class="hud-text-col">
+      <span class="hud-brand-tag" id="hudBrandTag">PORTAL GASTRONÓMICO</span>
+      <span class="hud-message" id="hudMessage">Procesando solicitud...</span>
+    </div>
+  </div>
 
   <!-- Topbar Institucional -->
   <div class="header-topbar">
@@ -405,13 +665,13 @@
       </a>
 
       <div class="nav-actions">
-        <a href="{% url 'catalogo_publico' %}" class="nav-btn nav-btn-outline">
+        <a href="{% url 'catalogo_publico' %}" class="nav-btn nav-btn-outline" id="navLinkCatalogo">
           🍽️ Catálogo Estudiantes
         </a>
 
         {% if user.is_authenticated %}
           {% if user.local %}
-            <a href="{% url 'panel_operador' %}" class="nav-btn nav-btn-primary">
+            <a href="{% url 'panel_operador' %}" class="nav-btn nav-btn-primary" id="navLinkPanel" data-local="{{ user.local.nombre }}">
               📱 Panel {{ user.local.nombre }}
             </a>
           {% endif %}
@@ -511,6 +771,122 @@
         window.scrollTo({
           top: 0,
           behavior: 'smooth'
+        });
+      });
+    })();
+
+    // ============================================================
+    // 1. CONTROL DEL PRELOADER SPLASH (EXCLUSIVO PARA INICIO Y CIERRE DE SESIÓN)
+    // ============================================================
+    (function initPreloader() {
+      const preloader = document.getElementById('inacapPreloader');
+      if (!preloader) return;
+
+      window.showPreloader = function(title, subtitle) {
+        if (!preloader) return;
+        if (title) {
+          const tEl = preloader.querySelector('.preloader-title');
+          if (tEl) tEl.textContent = title;
+        }
+        if (subtitle) {
+          const sEl = preloader.querySelector('.preloader-subtitle');
+          if (sEl) sEl.textContent = subtitle;
+        }
+        preloader.classList.add('is-visible');
+      };
+
+      window.hidePreloader = function() {
+        if (preloader) {
+          preloader.classList.remove('is-visible');
+        }
+      };
+
+      // Si el navegador restaura la página desde memoria/historial (bfcache)
+      window.addEventListener('pageshow', () => {
+        window.hidePreloader();
+      });
+
+      // Hook automático exclusivo para enlaces de cerrar sesión
+      document.querySelectorAll('a[href*="logout"]').forEach(a => {
+        a.addEventListener('click', () => {
+          window.showPreloader("Cerrando sesión...", "Finalizando turno seguro...");
+        });
+      });
+    })();
+
+    // ============================================================
+    // 2. BANNER HUD DE PROCESAMIENTO / CARGAS DE PÁGINA
+    // (Blanco con acento rojo y letras negras para todo tipo de momentos)
+    // ============================================================
+    (function initProcessingHUD() {
+      const hud = document.getElementById('inacapProcessingHUD');
+      const brandTagEl = document.getElementById('hudBrandTag');
+      const messageEl = document.getElementById('hudMessage');
+      let autoHideTimer = null;
+
+      window.showProcessingHUD = function(tag, message, autoHideMs = 0) {
+        if (!hud) return;
+        if (autoHideTimer) {
+          clearTimeout(autoHideTimer);
+          autoHideTimer = null;
+        }
+
+        if (brandTagEl) brandTagEl.textContent = tag || 'PORTAL GASTRONÓMICO';
+        if (messageEl) messageEl.textContent = message || 'Procesando solicitud...';
+
+        hud.classList.add('is-active');
+
+        if (autoHideMs && autoHideMs > 0) {
+          autoHideTimer = setTimeout(() => {
+            window.hideProcessingHUD();
+          }, autoHideMs);
+        }
+      };
+
+      window.hideProcessingHUD = function() {
+        if (hud) hud.classList.remove('is-active');
+        if (autoHideTimer) {
+          clearTimeout(autoHideTimer);
+          autoHideTimer = null;
+        }
+      };
+
+      // Restablecer al volver en historial
+      window.addEventListener('pageshow', () => {
+        window.hideProcessingHUD();
+      });
+
+      // Hook al alternar entre Catálogo Estudiantes y Panel del Local
+      const navLinkCat = document.getElementById('navLinkCatalogo');
+      if (navLinkCat) {
+        navLinkCat.addEventListener('click', function(e) {
+          const currentPath = window.location.pathname;
+          // Si estamos navegando desde el panel u otra vista hacia el catálogo
+          if (!currentPath.endsWith('/catalogo/') && currentPath !== '/') {
+            window.showProcessingHUD('PORTAL GASTRONÓMICO', 'Cargando Catálogo de Estudiantes...');
+          }
+        });
+      }
+
+      const navLinkPan = document.getElementById('navLinkPanel');
+      if (navLinkPan) {
+        navLinkPan.addEventListener('click', function(e) {
+          const currentPath = window.location.pathname;
+          // Si estamos navegando hacia el panel
+          if (!currentPath.includes('/panel/')) {
+            const localNom = navLinkPan.getAttribute('data-local') || 'Local';
+            window.showProcessingHUD('PANEL DE OPERADOR', `Accediendo a Panel ${localNom}...`);
+          }
+        });
+      }
+
+      // También al hacer click en el logo/título principal hacia el catálogo
+      document.querySelectorAll('a.brand-link').forEach(function(link) {
+        link.addEventListener('click', function() {
+          const currentPath = window.location.pathname;
+          if (!currentPath.endsWith('/catalogo/') && currentPath !== '/') {
+            window.showProcessingHUD('PORTAL GASTRONÓMICO', 'Cargando Catálogo de Estudiantes...');
+          }
         });
       });
     })();

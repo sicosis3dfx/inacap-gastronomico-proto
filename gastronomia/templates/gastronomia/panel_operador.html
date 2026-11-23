@@ -872,6 +872,12 @@
       payload.duracion_minutos = parseInt(selectDuracion.value) || 60;
     }
 
+    // HUD institucional de procesamiento
+    if (typeof window.showProcessingHUD === 'function') {
+      const msg = action === 'desactivar' ? 'Desactivando oferta relámpago...' : 'Publicando promoción flash en catálogo...';
+      window.showProcessingHUD('PROMOCIONES FLASH', msg);
+    }
+
     try {
       const response = await fetch(`/api/producto/${prodId}/promo-flash/`, {
         method: 'POST',
@@ -948,8 +954,19 @@
 
     } catch (err) {
       mostrarToast(`❌ Error: ${err.message}`, 'error');
+    } finally {
+      if (typeof window.hideProcessingHUD === 'function') {
+        window.hideProcessingHUD();
+      }
     }
   }
+
+  // Hook para formulario de creación de ítem
+  document.querySelector('#form-agregar form')?.addEventListener('submit', function() {
+    if (typeof window.showProcessingHUD === 'function') {
+      window.showProcessingHUD('GESTIÓN DE CARTA', 'Guardando y publicando nuevo ítem en catálogo...');
+    }
+  });
 
   function mostrarToast(mensaje, tipo = 'success') {
     const toast = document.getElementById('toast-notification');

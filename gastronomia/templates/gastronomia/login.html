@@ -17,21 +17,29 @@
     </p>
   </div>
 
-  <form method="post" action="{% url 'login' %}">
+  <form method="post" action="{% url 'login' %}" id="loginForm">
     {% csrf_token %}
 
     <div style="margin-bottom: 16px;">
-      <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">
+      <label for="usernameInput" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">
         Usuario institucional
       </label>
-      <input type="text" name="username" required autofocus class="form-input-control" placeholder="Ej: operador_casino, encargado_ft1">
+      <input type="text" name="username" id="usernameInput" required autofocus class="form-input-control" placeholder="Ej: operador_casino, encargado_ft1" autocomplete="username">
     </div>
 
-    <div style="margin-bottom: 24px;">
-      <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">
+    <div style="margin-bottom: 18px;">
+      <label for="passwordInput" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">
         Contraseña
       </label>
-      <input type="password" name="password" required class="form-input-control" placeholder="••••••••">
+      <input type="password" name="password" id="passwordInput" required class="form-input-control" placeholder="••••••••" autocomplete="current-password">
+    </div>
+
+    <!-- Checkbox Recordar Usuario (Solo identificador de usuario, sin almacenar contraseñas) -->
+    <div style="margin-bottom: 22px; display: flex; align-items: center; gap: 8px;">
+      <input type="checkbox" id="rememberUsername" style="width: 17px; height: 17px; cursor: pointer; accent-color: var(--inacap-red);">
+      <label for="rememberUsername" style="font-size: 0.84rem; font-weight: 600; color: var(--text-main); cursor: pointer; user-select: none;">
+        Recordar mi usuario en este equipo
+      </label>
     </div>
 
     <button type="submit" class="nav-btn nav-btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem; border-radius: 25px;">
@@ -43,5 +51,49 @@
     Control de acceso restringido bajo estándar OWASP A01 y Ley N° 21.459.
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function initLoginForm() {
+    const form = document.getElementById('loginForm');
+    const uInput = document.getElementById('usernameInput');
+    const pInput = document.getElementById('passwordInput');
+    const remCheck = document.getElementById('rememberUsername');
+
+    const STORAGE_KEY = 'inacap_saved_username';
+
+    // 1. Restaurar usuario recordado al abrir la página de login
+    try {
+      const savedUser = localStorage.getItem(STORAGE_KEY);
+      if (savedUser && uInput && remCheck) {
+        uInput.value = savedUser;
+        remCheck.checked = true;
+        // Si el usuario ya está cargado, enfocamos directamente la contraseña para máxima comodidad
+        if (pInput) {
+          setTimeout(() => pInput.focus(), 50);
+        }
+      }
+    } catch (e) {
+      console.warn('localStorage no disponible:', e);
+    }
+
+    // 2. Al enviar el formulario: guardar usuario si está marcado y mostrar Splash
+    form?.addEventListener('submit', function() {
+      try {
+        if (remCheck && remCheck.checked && uInput && uInput.value.trim()) {
+          localStorage.setItem(STORAGE_KEY, uInput.value.trim());
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      } catch (e) {}
+
+      // Activar pantalla de carga frontal institucional (Splash exclusivo)
+      if (typeof window.showPreloader === 'function') {
+        window.showPreloader("Iniciando sesión...", "Validando credenciales en INACAP...");
+      }
+    });
+  })();
+</script>
 {% endblock %}
 
