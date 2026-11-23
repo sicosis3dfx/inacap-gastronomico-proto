@@ -18,7 +18,7 @@ Esta guía contiene los **comandos listos para copiar y pegar** durante la prese
 
 > 💡 **Nota Previa para la Consola DevTools (F12):**  
 > Si Google Chrome o Edge bloquea el pegado con la advertencia de seguridad *Self-XSS*, escribe primero en la consola:  
-> `permitir pegado` *(y pulsa Enter)*. Luego ya podrás pegar cualquier snippet libremente.
+> `permitir pegado` o `allow pasting` *(y pulsa Enter)*. Luego ya podrás pegar cualquier snippet libremente.
 
 ---
 
